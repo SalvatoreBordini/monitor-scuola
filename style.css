@@ -92,9 +92,43 @@ body {
     font-size: 1.8rem;
 }
 
-#notices-container, #news-container {
+#notices-container {
     flex: 1;
     overflow-y: auto;
+}
+
+/* Contenitore e scorrimento verticale per la colonna Eventi */
+.news-board {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.events-scroll-wrapper {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+}
+
+.events-scroll-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: scrollDown 20s linear infinite;
+}
+
+.events-scroll-wrapper:hover .events-scroll-content {
+    animation-play-state: paused;
+}
+
+@keyframes scrollDown {
+    0% {
+        transform: translateY(-50%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
 }
 
 .loading-text {
