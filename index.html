@@ -64,7 +64,7 @@
             height: calc(100vh - 240px); 
         }
         .sezione-avvisi {
-            flex: 6;
+            flex: 7;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
@@ -74,7 +74,7 @@
             flex-direction: column;
         }
         .sezione-calendario {
-            flex: 4;
+            flex: 3;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
@@ -110,30 +110,17 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            overflow-y: auto;
-            padding-right: 5px;
+            overflow-y: auto; /* Permette lo scorrimento se gli eventi sono molti */
         }
-        /* Personalizzazione barra di scorrimento */
-        .lista-eventi::-webkit-scrollbar { width: 6px; }
-        .lista-eventi::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-
         .evento-item {
             background: #0f172a;
             padding: 15px;
             border-radius: 8px;
             border-bottom: 3px solid #10b981;
         }
-        .evento-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
         .evento-data { font-weight: bold; color: #10b981; font-size: 1.1rem; }
-        .evento-ora { font-size: 0.95rem; color: #94a3b8; background: #1e293b; padding: 2px 8px; border-radius: 4px; }
-        .evento-testo { font-size: 1.3rem; color: #f1f5f9; font-weight: 600; }
-        .evento-luogo { font-size: 1rem; color: #38bdf8; margin-top: 4px; font-style: italic; }
-        .loading-text { color: #94a3b8; font-style: italic; font-size: 1.2rem; }
+        .evento-testo { font-size: 1.3rem; margin-top: 5px; color: #f1f5f9; }
+        .loading-text { color: #94a3b8; font-style: italic; }
 
         /* --- 3. BLOCCO INFERIORE (Footer Segreteria) --- */
         footer {
@@ -185,17 +172,17 @@
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
             <div class="corpo-avvisi">
                 <div class="avviso-item">
-                    <h2>Benvenuti nell'A.S. 2026/2027</h2>
-                    <p>Controllare regolarmente questa schermata o il registro elettronico per comunicazioni urgenti, variazioni d'orario e sciopero delle attività didattiche.</p>
+                    <h2>Assemblea d'Istituto straordinaria</h2>
+                    <p>Si comunica che venerdì prossimo le lezioni termineranno alle ore 12:00 per consentire lo svolgimento dell'Assemblea d'Istituto.</p>
                 </div>
             </div>
         </section>
 
-        <!-- CALENDARIO EVENTI AUTOMATICO -->
+        <!-- CALENDARIO EVENTI (COLLEGATO A GOOGLE FOGLI) -->
         <section class="sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
             <ul class="lista-eventi" id="eventi-container">
-                <li class="loading-text">Sincronizzazione con il database scolastico...</li>
+                <li class="loading-text">Aggiornamento eventi...</li>
             </ul>
         </section>
     </main>
@@ -218,51 +205,67 @@
     </footer>
 
     <script>
-        // Collegamento diretto al link fornito per l'esportazione CSV
-        const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhm88eN5NYQejIzjKx7H4LGrrm8Xpv85xX-szGbkznPETKtk_gDXhrULWXPqZK4jO9f3RDm6E46r9B/pub?gid=0&single=true&output=csv';
+        // INCOLLA QUI IL TUO LINK CSV DI GOOGLE FOGLI
+        const SPREADSHEET_URL = 'INCOLLA_QUI_IL_TUO_LINK_PUBBLICA_SUL_WEB';
 
-        // Funzione per parsare le righe CSV gestendo correttamente i campi con virgolette
-        function parseCSVLine(text) {
-            let p = '', r = [];
-            let q = false;
-            for (let i = 0; i < text.length; i++) {
-                let c = text[i];
-                if (c === '"') { q = !q; }
-                else if (c === ',' && !q) { r.push(p); p = ''; }
-                else { p += c; }
-            }
-            r.push(p);
-            return r;
-        }
-
+        // Funzione per caricare e interpretare il CSV di Google Fogli
         async function fetchEvents() {
+            if (SPREADSHEET_URL === 'INCOLLA_QUI_IL_TUO_LINK_PUBBLICA_SUL_WEB') {
+                document.getElementById('eventi-container').innerHTML = '<li class="loading-text" style="color:red;">Configurare il link di Google Fogli nel codice.</li>';
+                return;
+            }
+
             try {
-                // Il timestamp preventivo evita il caching aggressivo del browser
+                // Aggiungiamo un timestamp per evitare che il browser mantenga in cache i vecchi dati
                 const response = await fetch(`${SPREADSHEET_URL}&t=${new Date().getTime()}`);
                 const data = await response.text();
                 
-                // Dividiamo per righe
-                const lines = data.split(/\r?\n/);
+                const rows = data.split('\n').map(row => row.split(','));
                 const container = document.getElementById('eventi-container');
-                container.innerHTML = ''; 
+                container.innerHTML = ''; // Svuota il contenitore del caricamento
 
+                // Saltiamo la prima riga delle intestazioni (i=1)
                 let eventiTrovati = false;
+                for (let i = 1; i < rows.length; i++) {
+                    if (rows[i].length >= 2 && rows[i][0].trim() !== '') {
+                        const dataEvento = rows[i][0].replace(/"/g, '').trim();
+                        const testoEvento = rows[i][1].replace(/"/g, '').trim();
 
-                // Partiamo dall'indice 1 (saltando l'intestazione data,titolo,ora,luogo,descrizione)
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].trim()) continue;
-                    
-                    const columns = parseCSVLine(lines[i]);
-                    
-                    // Controlla che ci siano almeno la data e il titolo
-                    if (columns.length >= 2 && columns[0].trim() !== "") {
-                        const dataEv = columns[0].trim();
-                        const titoloEv = columns[1].trim();
-                        const oraEv = columns[2] ? columns[2].trim() : '';
-                        const luogoEv = columns[3] ? columns[3].trim() : '';
-                        
-                        // Creazione elemento HTML per l'evento
                         const li = document.createElement('li');
                         li.className = 'evento-item';
-                        
-                        let infoOra = oraEv ? `<span class="evento-ora">🕒 ${oraEv}</span>` : '';
+                        li.innerHTML = `
+                            <div class="evento-data">${dataEvento}</div>
+                            <div class="evento-testo">${testoEvento}</div>
+                        `;
+                        container.appendChild(li);
+                        eventiTrovati = true;
+                    }
+                }
+
+                if (!eventiTrovati) {
+                    container.innerHTML = '<li class="loading-text">Nessun evento in programma.</li>';
+                }
+
+            } catch (error) {
+                console.error("Errore nel recupero dati:", error);
+                document.getElementById('eventi-container').innerHTML = '<li class="loading-text">Errore nel caricamento eventi.</li>';
+            }
+        }
+
+        // Gestione Data e Ora
+        function updateDateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('orologio').textContent = timeString;
+            
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const dateString = now.toLocaleDateString('it-IT', dateOptions);
+            document.getElementById('data').textContent = dateString;
+        }
+        
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Carica gli eventi all'avvio
+        fetchEvents();
+
