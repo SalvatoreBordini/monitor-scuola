@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #0f172a; 
+            background-color: #0f172a; /* Blu notte scuro ultra-moderno */
             color: #f8fafc;
             overflow: hidden;
             height: 100vh;
@@ -24,22 +24,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 5px solid #0284c7; 
+            border-bottom: 5px solid #0284c7; /* Accento azzurro istituzionale */
         }
         .scuola-info {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        .scuola-logo { font-size: 3.5rem; line-height: 1; }
+        .scuola-logo {
+            font-size: 3.5rem;
+            line-height: 1;
+        }
         .scuola-dati h1 {
             font-size: 2rem;
             color: #ffffff;
             font-weight: 700;
             margin-bottom: 5px;
         }
-        .scuola-contatti { font-size: 1.1rem; color: #94a3b8; }
-        .scuola-contatti span { margin-right: 15px; }
+        .scuola-contatti {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+        .scuola-contatti span {
+            margin-right: 15px;
+        }
         .datetime-box {
             text-align: right;
             background: #0f172a;
@@ -53,7 +61,11 @@
             color: #38bdf8;
             font-family: monospace;
         }
-        #data { font-size: 1.2rem; color: #94a3b8; text-transform: capitalize; }
+        #data {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            text-transform: capitalize;
+        }
 
         /* --- 2. ZONA CENTRALE (Main Layout) --- */
         main {
@@ -61,28 +73,29 @@
             display: flex;
             padding: 30px;
             gap: 30px;
-            height: calc(100vh - 240px); 
+            height: calc(100vh - 240px); /* Bilanciamento degli spazi */
         }
+        /* Box Avvisi (70% di larghezza) */
         .sezione-avvisi {
             flex: 7;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #ef4444; 
+            border-left: 8px solid #ef4444; /* Rosso avviso */
             display: flex;
             flex-direction: column;
         }
+        /* Box Calendario (30% di larghezza) */
         .sezione-calendario {
             flex: 3;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #10b981; 
+            border-left: 8px solid #10b981; /* Verde eventi */
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
         .titolo-sezione {
             font-size: 1.8rem;
@@ -95,6 +108,7 @@
             gap: 10px;
         }
         
+        /* Contenuti dinamici interni */
         .corpo-avvisi {
             flex: 1;
             display: flex;
@@ -104,13 +118,11 @@
         .avviso-item h2 { font-size: 2.8rem; color: #ffffff; margin-bottom: 15px; }
         .avviso-item p { font-size: 1.6rem; color: #cbd5e1; line-height: 1.6; }
 
-        /* Lista eventi dinamica */
         .lista-eventi {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow-y: auto; /* Permette lo scorrimento se gli eventi sono molti */
+            gap: 20px;
         }
         .evento-item {
             background: #0f172a;
@@ -120,7 +132,6 @@
         }
         .evento-data { font-weight: bold; color: #10b981; font-size: 1.1rem; }
         .evento-testo { font-size: 1.3rem; margin-top: 5px; color: #f1f5f9; }
-        .loading-text { color: #94a3b8; font-style: italic; }
 
         /* --- 3. BLOCCO INFERIORE (Footer Segreteria) --- */
         footer {
@@ -148,10 +159,12 @@
 </head>
 <body>
 
+    <!-- 1. ALTO: INFO SCUOLA, DATA E ORA -->
     <header>
         <div class="scuola-info">
             <div class="scuola-logo">🏫</div>
             <div class="scuola-dati">
+                <!-- MODIFICA I DATI DELLA SCUOLA QUI -->
                 <h1>ISTITUTO D'ISTRUZIONE SUPERIORE "G. MARCONI"</h1>
                 <div class="scuola-contatti">
                     <span>📍 Via Roma 123, Milano</span>
@@ -166,106 +179,88 @@
         </div>
     </header>
 
+    <!-- 2. CENTRO: AVVISI E CALENDARIO EVENTI -->
     <main>
-        <!-- AVVISI PRINCIPALI -->
+        <!-- BOX AVVISI PRINCIPALI (Sinistra) -->
         <section class="sezione-avvisi">
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
             <div class="corpo-avvisi">
                 <div class="avviso-item">
+                    <!-- MODIFICA L'AVVISO PRINCIPALE QUI -->
                     <h2>Assemblea d'Istituto straordinaria</h2>
-                    <p>Si comunica che venerdì prossimo le lezioni termineranno alle ore 12:00 per consentire lo svolgimento dell'Assemblea d'Istituto.</p>
+                    <p>Si comunica che venerdì prossimo le lezioni termineranno alle ore 12:00 per consentire lo svolgimento dell'Assemblea d'Istituto in modalità mista.</p>
                 </div>
             </div>
         </section>
 
-        <!-- CALENDARIO EVENTI (COLLEGATO A GOOGLE FOGLI) -->
+        <!-- BOX CALENDARIO EVENTI (Destra) -->
         <section class="sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
-            <ul class="lista-eventi" id="eventi-container">
-                <li class="loading-text">Aggiornamento eventi...</li>
+            <ul class="lista-eventi">
+                <!-- MODIFICA O AGGIUNGI GLI EVENTI QUI -->
+                <li class="evento-item">
+                    <div class="evento-data">12 Novembre</div>
+                    <div class="evento-testo">Incontro Scuola-Famiglia (Biennio)</div>
+                </li>
+                <li class="evento-item">
+                    <div class="evento-data">18 Novembre</div>
+                    <div class="evento-testo">Open Day - Orientamento in ingresso</div>
+                </li>
+                <li class="evento-item">
+                    <div class="evento-data">25 Novembre</div>
+                    <div class="evento-testo">Consigli di Classe aperti ai genitori</div>
+                </li>
             </ul>
         </section>
     </main>
 
+    <!-- 3. BASSO: ORARI APERTURA SEGRETERIA -->
     <footer>
+        <!-- ORARIO PERSONALE -->
         <div class="box-segreteria">
             <div class="icona-segreteria">💼</div>
             <div class="info-orari">
                 <h3>Segreteria Personale (Docenti e ATA)</h3>
+                <!-- MODIFICA ORARIO PERSONALE QUI -->
                 <p>Lun - Ven: 07:45 - 09:15 | Mar - Gio: 15:00 - 16:30</p>
             </div>
         </div>
+
+        <!-- ORARIO FAMIGLIE -->
         <div class="box-segreteria">
             <div class="icona-segreteria">👨‍👩‍👧‍👦</div>
             <div class="info-orari">
                 <h3>Segreteria Alunni e Famiglie</h3>
+                <!-- MODIFICA ORARIO FAMIGLIE QUI -->
                 <p>Lun - Mer - Ven: 11:00 - 13:00 | Mar: 14:30 - 16:30</p>
             </div>
         </div>
     </footer>
 
+    <!-- SCRIPT LOGICA (Orologio, Data e Auto-Refresh) -->
     <script>
-        // INCOLLA QUI IL TUO LINK CSV DI GOOGLE FOGLI
-        const SPREADSHEET_URL = 'INCOLLA_QUI_IL_TUO_LINK_PUBBLICA_SUL_WEB';
-
-        // Funzione per caricare e interpretare il CSV di Google Fogli
-        async function fetchEvents() {
-            if (SPREADSHEET_URL === 'INCOLLA_QUI_IL_TUO_LINK_PUBBLICA_SUL_WEB') {
-                document.getElementById('eventi-container').innerHTML = '<li class="loading-text" style="color:red;">Configurare il link di Google Fogli nel codice.</li>';
-                return;
-            }
-
-            try {
-                // Aggiungiamo un timestamp per evitare che il browser mantenga in cache i vecchi dati
-                const response = await fetch(`${SPREADSHEET_URL}&t=${new Date().getTime()}`);
-                const data = await response.text();
-                
-                const rows = data.split('\n').map(row => row.split(','));
-                const container = document.getElementById('eventi-container');
-                container.innerHTML = ''; // Svuota il contenitore del caricamento
-
-                // Saltiamo la prima riga delle intestazioni (i=1)
-                let eventiTrovati = false;
-                for (let i = 1; i < rows.length; i++) {
-                    if (rows[i].length >= 2 && rows[i][0].trim() !== '') {
-                        const dataEvento = rows[i][0].replace(/"/g, '').trim();
-                        const testoEvento = rows[i][1].replace(/"/g, '').trim();
-
-                        const li = document.createElement('li');
-                        li.className = 'evento-item';
-                        li.innerHTML = `
-                            <div class="evento-data">${dataEvento}</div>
-                            <div class="evento-testo">${testoEvento}</div>
-                        `;
-                        container.appendChild(li);
-                        eventiTrovati = true;
-                    }
-                }
-
-                if (!eventiTrovati) {
-                    container.innerHTML = '<li class="loading-text">Nessun evento in programma.</li>';
-                }
-
-            } catch (error) {
-                console.error("Errore nel recupero dati:", error);
-                document.getElementById('eventi-container').innerHTML = '<li class="loading-text">Errore nel caricamento eventi.</li>';
-            }
-        }
-
-        // Gestione Data e Ora
         function updateDateTime() {
             const now = new Date();
+            
+            // Aggiorna Orologio
             const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             document.getElementById('orologio').textContent = timeString;
             
+            // Aggiorna Data estesa (es: "giovedì 5 novembre 2026")
             const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             const dateString = now.toLocaleDateString('it-IT', dateOptions);
             document.getElementById('data').textContent = dateString;
         }
         
+        // Esegui subito e aggiorna ogni secondo
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Carica gli eventi all'avvio
-        fetchEvents();
-
+        // AUTO-REFRESH: Ricarica l'intera pagina ogni 5 minuti (300000 ms) 
+        // per catturare le modifiche fatte da te su GitHub in tempo reale
+        setInterval(() => {
+            window.location.reload();
+        }, 300000);
+    </script>
+</body>
+</html>
