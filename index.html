@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #0f172a; /* Blu notte scuro ultra-moderno */
+            background-color: #0f172a; 
             color: #f8fafc;
             overflow: hidden;
             height: 100vh;
@@ -24,30 +24,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 5px solid #0284c7; /* Accento azzurro istituzionale */
+            border-bottom: 5px solid #0284c7; 
         }
         .scuola-info {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        .scuola-logo {
-            font-size: 3.5rem;
-            line-height: 1;
-        }
+        .scuola-logo { font-size: 3.5rem; line-height: 1; }
         .scuola-dati h1 {
             font-size: 2rem;
             color: #ffffff;
             font-weight: 700;
             margin-bottom: 5px;
         }
-        .scuola-contatti {
-            font-size: 1.1rem;
-            color: #94a3b8;
-        }
-        .scuola-contatti span {
-            margin-right: 15px;
-        }
+        .scuola-contatti { font-size: 1.1rem; color: #94a3b8; }
+        .scuola-contatti span { margin-right: 15px; }
         .datetime-box {
             text-align: right;
             background: #0f172a;
@@ -61,11 +53,7 @@
             color: #38bdf8;
             font-family: monospace;
         }
-        #data {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            text-transform: capitalize;
-        }
+        #data { font-size: 1.2rem; color: #94a3b8; text-transform: capitalize; }
 
         /* --- 2. ZONA CENTRALE (Main Layout) --- */
         main {
@@ -73,29 +61,28 @@
             display: flex;
             padding: 30px;
             gap: 30px;
-            height: calc(100vh - 240px); /* Bilanciamento degli spazi */
+            height: calc(100vh - 240px); 
         }
-        /* Box Avvisi (70% di larghezza) */
         .sezione-avvisi {
-            flex: 7;
+            flex: 6;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #ef4444; /* Rosso avviso */
+            border-left: 8px solid #ef4444; 
             display: flex;
             flex-direction: column;
         }
-        /* Box Calendario (30% di larghezza) */
         .sezione-calendario {
-            flex: 3;
+            flex: 4;
             background: #1e293b;
             border-radius: 16px;
             padding: 35px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #10b981; /* Verde eventi */
+            border-left: 8px solid #10b981; 
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
         .titolo-sezione {
             font-size: 1.8rem;
@@ -108,7 +95,6 @@
             gap: 10px;
         }
         
-        /* Contenuti dinamici interni */
         .corpo-avvisi {
             flex: 1;
             display: flex;
@@ -118,20 +104,36 @@
         .avviso-item h2 { font-size: 2.8rem; color: #ffffff; margin-bottom: 15px; }
         .avviso-item p { font-size: 1.6rem; color: #cbd5e1; line-height: 1.6; }
 
+        /* Lista eventi dinamica */
         .lista-eventi {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
+        /* Personalizzazione barra di scorrimento */
+        .lista-eventi::-webkit-scrollbar { width: 6px; }
+        .lista-eventi::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
         .evento-item {
             background: #0f172a;
             padding: 15px;
             border-radius: 8px;
             border-bottom: 3px solid #10b981;
         }
+        .evento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
         .evento-data { font-weight: bold; color: #10b981; font-size: 1.1rem; }
-        .evento-testo { font-size: 1.3rem; margin-top: 5px; color: #f1f5f9; }
+        .evento-ora { font-size: 0.95rem; color: #94a3b8; background: #1e293b; padding: 2px 8px; border-radius: 4px; }
+        .evento-testo { font-size: 1.3rem; color: #f1f5f9; font-weight: 600; }
+        .evento-luogo { font-size: 1rem; color: #38bdf8; margin-top: 4px; font-style: italic; }
+        .loading-text { color: #94a3b8; font-style: italic; font-size: 1.2rem; }
 
         /* --- 3. BLOCCO INFERIORE (Footer Segreteria) --- */
         footer {
@@ -159,12 +161,10 @@
 </head>
 <body>
 
-    <!-- 1. ALTO: INFO SCUOLA, DATA E ORA -->
     <header>
         <div class="scuola-info">
             <div class="scuola-logo">🏫</div>
             <div class="scuola-dati">
-                <!-- MODIFICA I DATI DELLA SCUOLA QUI -->
                 <h1>ISTITUTO D'ISTRUZIONE SUPERIORE "G. MARCONI"</h1>
                 <div class="scuola-contatti">
                     <span>📍 Via Roma 123, Milano</span>
@@ -179,88 +179,90 @@
         </div>
     </header>
 
-    <!-- 2. CENTRO: AVVISI E CALENDARIO EVENTI -->
     <main>
-        <!-- BOX AVVISI PRINCIPALI (Sinistra) -->
+        <!-- AVVISI PRINCIPALI -->
         <section class="sezione-avvisi">
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
             <div class="corpo-avvisi">
                 <div class="avviso-item">
-                    <!-- MODIFICA L'AVVISO PRINCIPALE QUI -->
-                    <h2>Assemblea d'Istituto straordinaria</h2>
-                    <p>Si comunica che venerdì prossimo le lezioni termineranno alle ore 12:00 per consentire lo svolgimento dell'Assemblea d'Istituto in modalità mista.</p>
+                    <h2>Benvenuti nell'A.S. 2026/2027</h2>
+                    <p>Controllare regolarmente questa schermata o il registro elettronico per comunicazioni urgenti, variazioni d'orario e sciopero delle attività didattiche.</p>
                 </div>
             </div>
         </section>
 
-        <!-- BOX CALENDARIO EVENTI (Destra) -->
+        <!-- CALENDARIO EVENTI AUTOMATICO -->
         <section class="sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
-            <ul class="lista-eventi">
-                <!-- MODIFICA O AGGIUNGI GLI EVENTI QUI -->
-                <li class="evento-item">
-                    <div class="evento-data">12 Novembre</div>
-                    <div class="evento-testo">Incontro Scuola-Famiglia (Biennio)</div>
-                </li>
-                <li class="evento-item">
-                    <div class="evento-data">18 Novembre</div>
-                    <div class="evento-testo">Open Day - Orientamento in ingresso</div>
-                </li>
-                <li class="evento-item">
-                    <div class="evento-data">25 Novembre</div>
-                    <div class="evento-testo">Consigli di Classe aperti ai genitori</div>
-                </li>
+            <ul class="lista-eventi" id="eventi-container">
+                <li class="loading-text">Sincronizzazione con il database scolastico...</li>
             </ul>
         </section>
     </main>
 
-    <!-- 3. BASSO: ORARI APERTURA SEGRETERIA -->
     <footer>
-        <!-- ORARIO PERSONALE -->
         <div class="box-segreteria">
             <div class="icona-segreteria">💼</div>
             <div class="info-orari">
                 <h3>Segreteria Personale (Docenti e ATA)</h3>
-                <!-- MODIFICA ORARIO PERSONALE QUI -->
                 <p>Lun - Ven: 07:45 - 09:15 | Mar - Gio: 15:00 - 16:30</p>
             </div>
         </div>
-
-        <!-- ORARIO FAMIGLIE -->
         <div class="box-segreteria">
             <div class="icona-segreteria">👨‍👩‍👧‍👦</div>
             <div class="info-orari">
                 <h3>Segreteria Alunni e Famiglie</h3>
-                <!-- MODIFICA ORARIO FAMIGLIE QUI -->
                 <p>Lun - Mer - Ven: 11:00 - 13:00 | Mar: 14:30 - 16:30</p>
             </div>
         </div>
     </footer>
 
-    <!-- SCRIPT LOGICA (Orologio, Data e Auto-Refresh) -->
     <script>
-        function updateDateTime() {
-            const now = new Date();
-            
-            // Aggiorna Orologio
-            const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('orologio').textContent = timeString;
-            
-            // Aggiorna Data estesa (es: "giovedì 5 novembre 2026")
-            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            const dateString = now.toLocaleDateString('it-IT', dateOptions);
-            document.getElementById('data').textContent = dateString;
-        }
-        
-        // Esegui subito e aggiorna ogni secondo
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
+        // Collegamento diretto al link fornito per l'esportazione CSV
+        const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhm88eN5NYQejIzjKx7H4LGrrm8Xpv85xX-szGbkznPETKtk_gDXhrULWXPqZK4jO9f3RDm6E46r9B/pub?gid=0&single=true&output=csv';
 
-        // AUTO-REFRESH: Ricarica l'intera pagina ogni 5 minuti (300000 ms) 
-        // per catturare le modifiche fatte da te su GitHub in tempo reale
-        setInterval(() => {
-            window.location.reload();
-        }, 300000);
-    </script>
-</body>
-</html>
+        // Funzione per parsare le righe CSV gestendo correttamente i campi con virgolette
+        function parseCSVLine(text) {
+            let p = '', r = [];
+            let q = false;
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i];
+                if (c === '"') { q = !q; }
+                else if (c === ',' && !q) { r.push(p); p = ''; }
+                else { p += c; }
+            }
+            r.push(p);
+            return r;
+        }
+
+        async function fetchEvents() {
+            try {
+                // Il timestamp preventivo evita il caching aggressivo del browser
+                const response = await fetch(`${SPREADSHEET_URL}&t=${new Date().getTime()}`);
+                const data = await response.text();
+                
+                // Dividiamo per righe
+                const lines = data.split(/\r?\n/);
+                const container = document.getElementById('eventi-container');
+                container.innerHTML = ''; 
+
+                let eventiTrovati = false;
+
+                // Partiamo dall'indice 1 (saltando l'intestazione data,titolo,ora,luogo,descrizione)
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    
+                    const columns = parseCSVLine(lines[i]);
+                    
+                    // Controlla che ci siano almeno la data e il titolo
+                    if (columns.length >= 2 && columns[0].trim() !== "") {
+                        const dataEv = columns[0].trim();
+                        const titoloEv = columns[1].trim();
+                        const oraEv = columns[2] ? columns[2].trim() : '';
+                        const luogoEv = columns[3] ? columns[3].trim() : '';
+                        
+                        // Creazione elemento HTML per l'evento
+                        const li = document.createElement('li');
+                        li.className = 'evento-item';
+                        
+                        let infoOra = oraEv ? `<span class="evento-ora">🕒 ${oraEv}</span>` : '';
