@@ -522,4 +522,33 @@
         ];
 
         function initSlideshow() {
-            const container = document.
+            const container = document.getElementById('slideshow-container');
+            if (!container) return;
+            
+            if (FOTO_URLS.length === 0) {
+                container.innerHTML = '<p class="loading-text">Nessuna foto disponibile</p>';
+                return;
+            }
+
+            FOTO_URLS.forEach((url, index) => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'slide-foto' + (index === 0 ? ' attiva' : '');
+                container.appendChild(img);
+            });
+
+            let currentIndex = 0;
+            const slides = container.getElementsByClassName('slide-foto');
+            
+            if (slides.length > 1) {
+                setInterval(() => {
+                    slides[currentIndex].classList.remove('attiva');
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    slides[currentIndex].classList.add('attiva');
+                }, 4000);
+            }
+        }
+        initSlideshow();
+    </script>
+</body>
+</html>
