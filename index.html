@@ -75,14 +75,13 @@
             flex-direction: column;
         }
         
-        /* NUOVO: Box Galleria Fotografica */
         .sezione-galleria {
             flex: 3;
             background: #1e293b;
             border-radius: 16px;
             padding: 25px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #38bdf8; /* Blu foto */
+            border-left: 8px solid #38bdf8;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -101,9 +100,9 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Adatta la foto riempiendo il riquadro senza distorcerla */
+            object-fit: cover;
             opacity: 0;
-            transition: opacity 1s ease-in-out; /* Effetto dissolvenza fluida */
+            transition: opacity 1s ease-in-out;
         }
         .slide-foto.attiva {
             opacity: 1;
@@ -215,7 +214,6 @@
     </header>
 
     <main>
-        <!-- 1. AVVISI PRINCIPALI (Sinistra) -->
         <section class="sezione-avvisi">
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
             <div class="corpo-avvisi">
@@ -226,19 +224,17 @@
             </div>
         </section>
 
-        <!-- 2. NUOVO: FOTO DELLA SCUOLA (Centro) -->
         <section class="sezione-galleria">
             <div class="titolo-sezione">📸 Vita Scolastica</div>
             <div class="container-slideshow" id="slideshow-container">
-                <!-- Le immagini verranno inserite dinamicamente dal codice JavaScript sotto -->
+                <!-- Immagini caricate da JS -->
             </div>
         </section>
 
-        <!-- 3. CALENDARIO EVENTI AUTOMATICO (Destra) -->
         <section class="sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
             <ul class="lista-eventi" id="eventi-container">
-                <li class="loading-text">Sincronizzazione con il database scolastico...</li>
+                <li class="loading-text">Nessun evento in programma</li>
             </ul>
         </section>
     </main>
@@ -261,15 +257,34 @@
     </footer>
 
     <script>
+        // --- FUNZIONE OROLOGIO E DATA ---
+        function aggiornaOrologioEData() {
+            const ora = new Date();
+            
+            // Formatta l'orologio (HH:MM:SS)
+            const ore = String(ora.getHours()).padStart(2, '0');
+            const minuti = String(ora.getMinutes()).padStart(2, '0');
+            const secondi = String(ora.getSeconds()).padStart(2, '0');
+            document.getElementById('orologio').textContent = `${ore}:${minuti}:${secondi}`;
+            
+            // Formatta la data in italiano (es. "venerdì 6 novembre 2026")
+            const opzioni = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dataFormattata = ora.toLocaleDateString('it-IT', opzioni);
+            document.getElementById('data').textContent = dataFormattata;
+        }
+
+        // Avvia subito l'orologio e impostane l'intervallo ogni secondo
+        aggiornaOrologioEData();
+        setInterval(aggiornaOrologioEData, 1000);
+
+
         // --- CONFIGURAZIONE IMMAGINI DELLA GALLERIA ---
-        // Sostituisci questi esempi con i link reali delle tue immagini della scuola
         const FOTO_URLS = [
-            'https://unsplash.com',
-            'https://unsplash.com',
-            'https://unsplash.com'
+            'https://images.unsplash.com/photo-1523050854058-8df90110c9f1',
+            'https://images.unsplash.com/photo-1580582932707-520aed937b7b',
+            'https://images.unsplash.com/photo-1509062522246-3755977927d7'
         ];
 
-        // Gestione automatica dello Slideshow Foto
         function initSlideshow() {
             const container = document.getElementById('slideshow-container');
             if (FOTO_URLS.length === 0) {
@@ -277,7 +292,26 @@
                 return;
             }
 
-            // Inserisci le immagini nell'HTML
             FOTO_URLS.forEach((url, index) => {
                 const img = document.createElement('img');
                 img.src = url;
+                img.className = 'slide-foto' + (index === 0 ? ' attiva' : '');
+                container.appendChild(img);
+            });
+
+            let currentIndex = 0;
+            const slides = container.getElementsByClassName('slide-foto');
+            
+            if (slides.length > 1) {
+                setInterval(() => {
+                    slides[currentIndex].classList.remove('attiva');
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    slides[currentIndex].classList.add('attiva');
+                }, 4000); // Cambia foto ogni 4 secondi
+            }
+        }
+
+        initSlideshow();
+    </script>
+</body>
+</html>
