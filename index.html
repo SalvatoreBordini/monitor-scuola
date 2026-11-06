@@ -17,9 +17,6 @@
             flex-direction: column;
         }
 
-  <div class="ticker-container">
-    <div class="ticker-text">📢 NOTIZIA LAMPO: Ricordiamo che le giustificazioni delle assenze vanno presentate tramite registro elettronico. Convocazione collegio docenti prevista per giovedì.</div>
-</div>      
         /* --- 1. BLOCCO SUPERIORE (Header) --- */
         header {
             background-color: #1e293b;
@@ -76,6 +73,7 @@
             border-left: 8px solid #ef4444; 
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
         
         .sezione-galleria {
@@ -136,9 +134,19 @@
         
         .corpo-avvisi {
             flex: 1;
+            position: relative;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            align-items: center;
+        }
+        .avviso-card {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .avviso-card.attivo {
+            opacity: 1;
         }
         .avviso-item h2 { font-size: 2.2rem; color: #ffffff; margin-bottom: 12px; }
         .avviso-item p { font-size: 1.4rem; color: #cbd5e1; line-height: 1.6; }
@@ -217,27 +225,27 @@
     </header>
 
     <main>
+        <!-- 1. AVVISI A ROTAZIONE (Sinistra) -->
         <section class="sezione-avvisi">
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
-            <div class="corpo-avvisi">
-                <div class="avviso-item">
-                    <h2>Benvenuti nell'A.S. 2026/2027</h2>
-                    <p>Controllare regolarmente questa schermata o il registro elettronico per comunicazioni urgenti, variazioni d'orario e sciopero delle attività didattiche.</p>
-                </div>
+            <div class="corpo-avvisi" id="avvisi-container">
+                <!-- Inseriti dinamicamente via JS -->
             </div>
         </section>
 
+        <!-- 2. GALLERIA FOTOGRAFICA (Centro) -->
         <section class="sezione-galleria">
             <div class="titolo-sezione">📸 Vita Scolastica</div>
             <div class="container-slideshow" id="slideshow-container">
-                <!-- Immagini caricate da JS -->
+                <!-- Inseriti dinamicamente via JS -->
             </div>
         </section>
 
+        <!-- 3. CALENDARIO EVENTI AUTOMATICO DA GOOGLE FOGLI (Destra) -->
         <section class="sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
             <ul class="lista-eventi" id="eventi-container">
-                <li class="loading-text">Nessun evento in programma</li>
+                <li class="loading-text">Sincronizzazione database...</li>
             </ul>
         </section>
     </main>
@@ -260,61 +268,5 @@
     </footer>
 
     <script>
-        // --- FUNZIONE OROLOGIO E DATA ---
-        function aggiornaOrologioEData() {
-            const ora = new Date();
-            
-            // Formatta l'orologio (HH:MM:SS)
-            const ore = String(ora.getHours()).padStart(2, '0');
-            const minuti = String(ora.getMinutes()).padStart(2, '0');
-            const secondi = String(ora.getSeconds()).padStart(2, '0');
-            document.getElementById('orologio').textContent = `${ore}:${minuti}:${secondi}`;
-            
-            // Formatta la data in italiano (es. "venerdì 6 novembre 2026")
-            const opzioni = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dataFormattata = ora.toLocaleDateString('it-IT', opzioni);
-            document.getElementById('data').textContent = dataFormattata;
-        }
-
-        // Avvia subito l'orologio e impostane l'intervallo ogni secondo
-        aggiornaOrologioEData();
-        setInterval(aggiornaOrologioEData, 1000);
-
-
-        // --- CONFIGURAZIONE IMMAGINI DELLA GALLERIA ---
-        const FOTO_URLS = [
-            'https://images.unsplash.com/photo-1523050854058-8df90110c9f1',
-            'https://images.unsplash.com/photo-1580582932707-520aed937b7b',
-            'https://images.unsplash.com/photo-1509062522246-3755977927d7'
-        ];
-
-        function initSlideshow() {
-            const container = document.getElementById('slideshow-container');
-            if (FOTO_URLS.length === 0) {
-                container.innerHTML = '<p class="loading-text">Nessuna foto disponibile</p>';
-                return;
-            }
-
-            FOTO_URLS.forEach((url, index) => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.className = 'slide-foto' + (index === 0 ? ' attiva' : '');
-                container.appendChild(img);
-            });
-
-            let currentIndex = 0;
-            const slides = container.getElementsByClassName('slide-foto');
-            
-            if (slides.length > 1) {
-                setInterval(() => {
-                    slides[currentIndex].classList.remove('attiva');
-                    currentIndex = (currentIndex + 1) % slides.length;
-                    slides[currentIndex].classList.add('attiva');
-                }, 4000); // Cambia foto ogni 4 secondi
-            }
-        }
-
-        initSlideshow();
-    </script>
-</body>
-</html>
+        // CONFIGURAZIONE: Link CSV di Google Fogli
+        const GOOGLE_SHEET_CSV_URL = '
