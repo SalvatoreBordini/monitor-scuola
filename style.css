@@ -225,3 +225,23 @@ body {
     0% { transform: translate3d(0, 0, 0); }
     100% { transform: translate3d(-100%, 0, 0); }
 }
+
+.ticker-container {
+    background: #b91c1c;
+    color: #fff;
+    padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-top: 2px solid #ef4444;
+}
+.ticker-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollTicker 25s linear infinite;
+}
+@keyframes scrollTicker {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
