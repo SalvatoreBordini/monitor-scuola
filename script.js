@@ -1,5 +1,5 @@
-// CONFIGURAZIONE: Il tuo link CSV di Google Fogli inserito correttamente
-const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhm88eN5NYQejIzjKx7H4LGrrm8Xpv85xX-szGbkznPETKtk_gDXhrULWXPqZK4jO9f3RDm6E46r9B/pub?output=csv';
+// CONFIGURAZIONE: Link CSV completo di Google Fogli
+const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhm88eN5NYQejIzjKx7H4LGrrm8Xpv85xX-szGbkznPETKtk_gDXhrULWXPqZK4jO9f3RDm6E46r9B/pub?gid=0&single=true&output=csv';
 
 // ==========================================
 // 1. GESTIONE OROLOGIO (CON SECONDI) E DATA
@@ -10,16 +10,18 @@ function updateClock() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
     
-    document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+    const clockEl = document.getElementById('orologio') || document.getElementById('current-time');
+    if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
     
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('current-date').textContent = now.toLocaleDateString('it-IT', options);
+    const dateEl = document.getElementById('data') || document.getElementById('current-date');
+    if (dateEl) dateEl.textContent = now.toLocaleDateString('it-IT', options);
 }
 setInterval(updateClock, 1000);
 updateClock();
 
 // ==========================================
-// 2. PARSER DI CONVERSIONE CSV IN SCHEDE GRAFICHE
+// 2. PARSER DI CONVERSIONE CSV
 // ==========================================
 function parseCSV(text) {
     const lines = text.split(/\r?\n/);
@@ -47,22 +49,25 @@ function parseCSV(text) {
 }
 
 // ==========================================
-// 3. CONVERSIONE TESTO DI GOOGLE IN DATA REALE
+// 3. CONVERSIONE TESTO DATA IN OGGETTO DATE
 // ==========================================
 function parseEventDate(dateStr) {
     if (!dateStr) return null;
     
     const mesiIta = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
     const now = new Date();
-    let giorno = parseInt(dateStr.match(/\d+/), 10);
+    let giorno = null;
     let mese = now.getMonth(); 
     let anno = now.getFullYear();
 
     const matchNumerico = dateStr.match(/(\d+)[\/\-](\d+)/);
     if (matchNumerico) {
-        giorno = parseInt(matchNumerico[0], 10);
-        mese = parseInt(matchNumerico[1], 10) - 1;
+        giorno = parseInt(matchNumerico[1], 10);
+        mese = parseInt(matchNumerico[2], 10) - 1;
     } else {
+        const matchGiorno = dateStr.match(/\d+/);
+        if (matchGiorno) giorno = parseInt(matchGiorno[0], 10);
+        
         const strMinuscola = dateStr.toLowerCase();
         for (let i = 0; i < mesiIta.length; i++) {
             if (strMinuscola.includes(mesiIta[i])) {
@@ -72,7 +77,7 @@ function parseEventDate(dateStr) {
         }
     }
 
-    if (isNaN(giorno)) return null;
+    if (giorno === null || isNaN(giorno)) return null;
 
     if (now.getMonth() === 11 && mese === 0) anno += 1;
     if (now.getMonth() === 0 && mese === 11) anno -= 1;
@@ -81,7 +86,7 @@ function parseEventDate(dateStr) {
 }
 
 // ==========================================
-// 4. RECUPERO DATI AUTOMATICO (ANTI-CACHE)
+// 4. RECUPERO E RENDER DATI (ANTI-CACHE)
 // ==========================================
 async function fetchMonitorData() {
     try {
@@ -93,19 +98,23 @@ async function fetchMonitorData() {
         renderNews(eventi);
     } catch (error) {
         console.error("Errore di sincronizzazione dati:", error);
-        document.getElementById('news-container').innerHTML = '<p style="color: #666;">Calendario temporaneamente non disponibile.</p>';
+        const container = document.getElementById('eventi-container') || document.getElementById('news-container');
+        if (container) {
+            container.innerHTML = '<li class="loading-text">Calendario temporaneamente non disponibile.</li>';
+        }
     }
 }
 
 function renderNews(eventi) {
-    // AGGIORNATO: Ora JavaScript controlla e svuota esclusivamente il contenitore di DESTRA delle News!
-    const container = document.getElementById('news-container');
+    const container = document.getElementById('eventi-container') || document.getElementById('news-container');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     const eventiValidi = eventi.filter(e => e.titolo && e.data && e.data.toLowerCase() !== 'data');
     
     if (eventiValidi.length === 0) {
-        container.innerHTML = '<p style="color: #666; font-style: italic; font-size: 1.1rem;">Nessun evento o circolare in bacheca.</p>';
+        container.innerHTML = '<li class="loading-text">Nessun evento o circolare in bacheca.</li>';
         return;
     }
     
@@ -118,12 +127,12 @@ function renderNews(eventi) {
 
     const eventiProssimiDieciGiorni = eventiValidi.filter(evento => {
         const dataEvento = parseEventDate(evento.data);
-        if (!dataEvento) return true; 
+        if (!dataEvento) return true; // Se la data non è parsabile, la mostra comunque
         return dataEvento >= oggi && dataEvento <= dataScadenza;
     });
 
     if (eventiProssimiDieciGiorni.length === 0) {
-        container.innerHTML = '<p style="color: #666; font-style: italic; font-size: 1.1rem;">Nessun evento previsto nei prossimi 10 giorni.</p>';
+        container.innerHTML = '<li class="loading-text">Nessun evento previsto nei prossimi 10 giorni.</li>';
         return;
     }
     
@@ -132,26 +141,20 @@ function renderNews(eventi) {
         const titolo = evento.titolo || '';
         const ora = evento.ora || '';
         const luogo = evento.luogo || '';
-        const descrizione = evento.descrizione || '';
 
-        const oraDettaglio = ora ? `🕒 Ore ${ora}` : '';
-        const luogoDettaglio = luogo ? `📍 ${luogo}` : '';
-        
-        const infoSecondarie = (oraDettaglio || luogoDettaglio) 
-            ? `<p class="event-meta">${oraDettaglio} &nbsp;&nbsp; ${luogoDettaglio}</p>` 
-            : '';
-
-        const div = document.createElement('div');
-        div.className = 'item-card';
-        div.innerHTML = `
-            <h3>📅 ${data} - ${titolo}</h3>
-            ${infoSecondarie}
-            <p>${descrizione}</p>
+        const li = document.createElement('li');
+        li.className = 'evento-item';
+        li.innerHTML = `
+            <div class="evento-header">
+                <span class="evento-data">${data}</span>
+                ${ora ? `<span class="evento-ora">${ora}</span>` : ''}
+            </div>
+            <div class="evento-testo">${titolo}</div>
+            ${luogo ? `<div class="evento-luogo">📍 ${luogo}</div>` : ''}
         `;
-        container.appendChild(div);
+        container.appendChild(li);
     });
 }
 
 fetchMonitorData();
-// Esegue il controllo solo sulla colonna degli eventi ogni 60 secondi
 setInterval(fetchMonitorData, 60000);
