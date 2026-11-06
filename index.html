@@ -274,4 +274,16 @@
 
     <script>
         // CONFIGURAZIONE: Link CSV di Google Fogli
-        const GOOGLE_SHEET_CSV_URL = '
+        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhm88eN5NYQejIzjKx7H4LGrrm8Xpv85xX-szGbkznPETKtk_gDXhrULWXPqZK4jO9f3RDm6E46r9B/pub?gid=0&single=true&output=csv';
+
+        // ==========================================
+        // 1. GESTIONE OROLOGIO E DATA IN TEMPO REALE
+        // ==========================================
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const clockEl = document.getElementById('orologio');
+            if (clockEl)
