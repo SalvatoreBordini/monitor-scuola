@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #0f172a; 
+            background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
             color: #f8fafc;
             overflow: hidden;
             height: 100vh;
@@ -17,48 +17,79 @@
             flex-direction: column;
         }
 
-        /* --- 1. BLOCCO SUPERIORE (Header sulla stessa riga) --- */
+        /* --- 1. BLOCCO SUPERIORE (Header) --- */
         header {
-            background-color: #1e293b;
-            padding: 15px 40px;
+            background-color: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 15px 35px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 5px solid #0284c7; 
+            border-bottom: 2px solid rgba(2, 132, 199, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
         .scuola-info {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        .scuola-logo { font-size: 3rem; line-height: 1; }
+        .scuola-logo { 
+            font-size: 3rem; 
+            background: rgba(2, 132, 199, 0.15);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            line-height: 1; 
+        }
         .scuola-dati h1 {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             color: #ffffff;
             font-weight: 700;
-            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .scuola-contatti { font-size: 1rem; color: #94a3b8; }
-        .scuola-contatti span { margin-right: 15px; }
+        .scuola-contatti { font-size: 0.95rem; color: #94a3b8; display: flex; gap: 20px; }
+        .scuola-contatti span { display: flex; align-items: center; gap: 6px; }
         
         .datetime-box {
             text-align: right;
-            background: #0f172a;
-            padding: 8px 15px;
-            border-radius: 10px;
-            border: 1px solid #334155;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 8px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             align-items: flex-end;
         }
+        .orologio-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulseDot 2s infinite;
+        }
+        @keyframes pulseDot {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
         #orologio {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 1.9rem;
+            font-weight: 700;
             color: #38bdf8;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
             line-height: 1.1;
         }
-        #data { font-size: 1rem; color: #94a3b8; text-transform: capitalize; }
+        #data { font-size: 0.95rem; color: #94a3b8; text-transform: capitalize; margin-top: 2px; }
 
         /* --- 2. ZONA CENTRALE (Layout a 3 Colonne) --- */
         main {
@@ -66,41 +97,47 @@
             display: flex;
             padding: 20px;
             gap: 20px;
-            height: calc(100vh - 200px); 
+            height: calc(100vh - 180px); 
         }
         
-        .sezione-avvisi {
-            flex: 3.5;
-            background: #1e293b;
+        .sezione-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #ef4444; 
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
         
-        .sezione-galleria {
-            flex: 3;
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #38bdf8;
+        .sezione-avvisi { flex: 3.5; border-left: 6px solid #ef4444; }
+        .sezione-galleria { flex: 3; border-left: 6px solid #38bdf8; }
+        .sezione-calendario { flex: 3.5; border-left: 6px solid #10b981; }
+        
+        .titolo-sezione {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(51, 65, 85, 0.6);
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            align-items: center;
+            gap: 10px;
+            color: #f1f5f9;
         }
+        
         .container-slideshow {
             flex: 1;
             position: relative;
-            background: #0f172a;
-            border-radius: 8px;
+            background: #090d16;
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .slide-foto {
             position: absolute;
@@ -108,33 +145,10 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
         .slide-foto.attiva {
             opacity: 1;
-        }
-        
-        .sezione-calendario {
-            flex: 3.5;
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-left: 8px solid #10b981; 
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .titolo-sezione {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #334155;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .corpo-avvisi {
@@ -153,8 +167,8 @@
         .avviso-card.attivo {
             opacity: 1;
         }
-        .avviso-item h2 { font-size: 2rem; color: #ffffff; margin-bottom: 10px; }
-        .avviso-item p { font-size: 1.3rem; color: #cbd5e1; line-height: 1.5; }
+        .avviso-item h2 { font-size: 1.7rem; color: #ffffff; margin-bottom: 12px; font-weight: 600; }
+        .avviso-item p { font-size: 1.15rem; color: #cbd5e1; line-height: 1.6; }
 
         .lista-eventi {
             list-style: none;
@@ -168,10 +182,14 @@
         .lista-eventi::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
         .evento-item {
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 8px;
-            border-bottom: 3px solid #10b981;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-left: 4px solid #10b981;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            border-right: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: transform 0.2s;
         }
         .evento-header {
             display: flex;
@@ -179,34 +197,41 @@
             align-items: center;
             margin-bottom: 4px;
         }
-        .evento-data { font-weight: bold; color: #10b981; font-size: 1rem; }
-        .evento-ora { font-size: 0.85rem; color: #94a3b8; background: #1e293b; padding: 1px 6px; border-radius: 4px; }
-        .evento-testo { font-size: 1.1rem; color: #f1f5f9; font-weight: 600; }
-        .evento-luogo { font-size: 0.9rem; color: #38bdf8; margin-top: 2px; font-style: italic; }
-        .loading-text { color: #94a3b8; font-style: italic; font-size: 1.1rem; }
+        .evento-data { font-weight: 600; color: #34d399; font-size: 0.95rem; }
+        .evento-ora { font-size: 0.85rem; color: #94a3b8; background: rgba(30, 41, 59, 0.8); padding: 2px 8px; border-radius: 6px; }
+        .evento-testo { font-size: 1.05rem; color: #f1f5f9; font-weight: 600; }
+        .evento-luogo { font-size: 0.9rem; color: #38bdf8; margin-top: 3px; font-style: italic; }
+        .loading-text { color: #94a3b8; font-style: italic; font-size: 1.05rem; text-align: center; margin-top: 20px; }
 
         /* --- 3. BLOCCO INFERIORE (Footer Segreteria) --- */
         footer {
-            background-color: #0f172a;
-            padding: 15px 40px;
-            border-top: 4px solid #334155;
+            background-color: rgba(15, 23, 42, 0.9);
+            padding: 12px 35px;
+            border-top: 2px solid rgba(51, 65, 85, 0.6);
             display: flex;
             justify-content: space-around;
-            gap: 30px;
+            gap: 25px;
         }
         .box-segreteria {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(5px);
             flex: 1;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 15px;
-            border: 1px solid #475569;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .icona-segreteria { font-size: 2rem; }
-        .info-orari h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 2px; }
-        .info-orari p { font-size: 1.25rem; font-weight: bold; color: #ffffff; }
+        .icona-segreteria { 
+            font-size: 1.8rem; 
+            background: rgba(56, 189, 248, 0.1);
+            padding: 8px;
+            border-radius: 10px;
+        }
+        .info-orari h3 { font-size: 1rem; color: #38bdf8; margin-bottom: 2px; font-weight: 600; }
+        .info-orari p { font-size: 1.15rem; font-weight: bold; color: #ffffff; letter-spacing: 0.3px; }
     </style>
 </head>
 <body>
@@ -224,14 +249,17 @@
             </div>
         </div>
         <div class="datetime-box">
-            <div id="orologio">00:00:00</div>
+            <div class="orologio-wrapper">
+                <span class="live-dot"></span>
+                <div id="orologio">00:00:00</div>
+            </div>
             <div id="data">Caricamento data...</div>
         </div>
     </header>
 
     <main>
         <!-- 1. AVVISI A ROTAZIONE (Sinistra) -->
-        <section class="sezione-avvisi">
+        <section class="sezione-card sezione-avvisi">
             <div class="titolo-sezione">📢 Avvisi Importanti</div>
             <div class="corpo-avvisi" id="avvisi-container">
                 <!-- Inseriti dinamicamente via JS -->
@@ -239,7 +267,7 @@
         </section>
 
         <!-- 2. GALLERIA FOTOGRAFICA (Centro) -->
-        <section class="sezione-galleria">
+        <section class="sezione-card sezione-galleria">
             <div class="titolo-sezione">📸 Vita Scolastica</div>
             <div class="container-slideshow" id="slideshow-container">
                 <!-- Inseriti dinamicamente via JS -->
@@ -247,7 +275,7 @@
         </section>
 
         <!-- 3. CALENDARIO EVENTI AUTOMATICO DA GOOGLE FOGLI (Destra) -->
-        <section class="sezione-calendario">
+        <section class="sezione-card sezione-calendario">
             <div class="titolo-sezione">📅 Prossimi Eventi</div>
             <ul class="lista-eventi" id="eventi-container">
                 <li class="loading-text">Sincronizzazione database...</li>
@@ -286,4 +314,212 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
             const clockEl = document.getElementById('orologio');
-            if (clockEl)
+            if (clockEl) {
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateEl = document.getElementById('data');
+            if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString('it-IT', options);
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==========================================
+        // 2. PARSER DI CONVERSIONE CSV
+        // ==========================================
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/);
+            if (lines.length === 0) return [];
+            
+            const firstLine = lines[0];
+            const separator = firstLine.includes(';') ? ';' : ',';
+            
+            const headers = firstLine.split(separator).map(h => h.trim().toLowerCase().replace(/"/g, ''));
+            const result = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const currentline = line.split(separator).map(cell => cell.trim().replace(/"/g, ''));
+                const obj = {};
+                
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = currentline[j] || '';
+                }
+                result.push(obj);
+            }
+            return result;
+        }
+
+        // ==========================================
+        // 3. CONVERSIONE TESTO DATA IN OGGETTO DATE
+        // ==========================================
+        function parseEventDate(dateStr) {
+            if (!dateStr) return null;
+            
+            const mesiIta = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+            const now = new Date();
+            let giorno = null;
+            let mese = now.getMonth(); 
+            let anno = now.getFullYear();
+
+            const matchNumerico = dateStr.match(/(\d+)[\/\-](\d+)/);
+            if (matchNumerico) {
+                giorno = parseInt(matchNumerico[1], 10);
+                mese = parseInt(matchNumerico[2], 10) - 1;
+            } else {
+                const matchGiorno = dateStr.match(/\d+/);
+                if (matchGiorno) giorno = parseInt(matchGiorno[0], 10);
+                
+                const strMinuscola = dateStr.toLowerCase();
+                for (let i = 0; i < mesiIta.length; i++) {
+                    if (strMinuscola.includes(mesiIta[i])) {
+                        mese = i;
+                        break;
+                    }
+                }
+            }
+
+            if (giorno === null || isNaN(giorno)) return null;
+
+            if (now.getMonth() === 11 && mese === 0) anno += 1;
+            if (now.getMonth() === 0 && mese === 11) anno -= 1;
+
+            return new Date(anno, mese, giorno, 0, 0, 0);
+        }
+
+        // ==========================================
+        // 4. RECUPERO EVENTI DA GOOGLE SHEETS
+        // ==========================================
+        async function fetchMonitorData() {
+            try {
+                const finalUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 'nocache=' + new Date().getTime();
+                const response = await fetch(finalUrl);
+                if (!response.ok) throw new Error('Errore di rete');
+                const csvText = await response.text();
+                
+                const eventi = parseCSV(csvText);
+                renderNews(eventi);
+            } catch (error) {
+                console.error("Errore di sincronizzazione dati:", error);
+                const container = document.getElementById('eventi-container');
+                if (container) {
+                    container.innerHTML = '<li class="loading-text" style="color: #ef4444;">Errore caricamento database.</li>';
+                }
+            }
+        }
+
+        function renderNews(eventi) {
+            const container = document.getElementById('eventi-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const eventiValidi = eventi.filter(e => e.titolo && e.data && e.data.toLowerCase() !== 'data');
+            
+            if (eventiValidi.length === 0) {
+                container.innerHTML = '<li class="loading-text">Nessun evento o circolare in bacheca.</li>';
+                return;
+            }
+            
+            const oggi = new Date();
+            oggi.setHours(0, 0, 0, 0);
+            
+            const dataScadenza = new Date();
+            dataScadenza.setDate(oggi.getDate() + 10);
+            dataScadenza.setHours(23, 59, 59, 999);
+
+            const eventiProssimiDieciGiorni = eventiValidi.filter(evento => {
+                const dataEvento = parseEventDate(evento.data);
+                if (!dataEvento) return true; 
+                return dataEvento >= oggi && dataEvento <= dataScadenza;
+            });
+
+            if (eventiProssimiDieciGiorni.length === 0) {
+                container.innerHTML = '<li class="loading-text">Nessun evento previsto nei prossimi 10 giorni.</li>';
+                return;
+            }
+            
+            eventiProssimiDieciGiorni.forEach(evento => {
+                const data = evento.data || '';
+                const titolo = evento.titolo || '';
+                const ora = evento.ora || '';
+                const luogo = evento.luogo || '';
+
+                const li = document.createElement('li');
+                li.className = 'evento-item';
+                li.innerHTML = `
+                    <div class="evento-header">
+                        <span class="evento-data">${data}</span>
+                        ${ora ? `<span class="evento-ora">${ora}</span>` : ''}
+                    </div>
+                    <div class="evento-testo">${titolo}</div>
+                    ${luogo ? `<div class="evento-luogo">📍 ${luogo}</div>` : ''}
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        fetchMonitorData();
+        setInterval(fetchMonitorData, 60000);
+
+        // ==========================================
+        // 5. SLIDESHOW AVVISI IMPORTANTI (SINISTRA)
+        // ==========================================
+        const LISTA_AVVISI = [
+            {
+                titolo: "Benvenuti nell'A.S. 2026/2027",
+                testo: "Controllare regolarmente questa schermata o il registro elettronico per comunicazioni urgenti e variazioni d'orario."
+            },
+            {
+                titolo: "⚠️ Ricevimento Genitori",
+                testo: "Le prenotazioni per i colloqui pomeridiani con i docenti sono aperte tramite il registro elettronico."
+            },
+            {
+                titolo: "📅 Uscite Didattiche",
+                testo: "Si ricordano le autorizzazioni firmate per le attività previste e i progetti di cittadinanza attiva."
+            }
+        ];
+
+        function initAvvisiSlideshow() {
+            const container = document.getElementById('avvisi-container');
+            if (!container || LISTA_AVVISI.length === 0) return;
+
+            LISTA_AVVISI.forEach((avviso, index) => {
+                const div = document.createElement('div');
+                div.className = 'avviso-item avviso-card' + (index === 0 ? ' attivo' : '');
+                div.innerHTML = `
+                    <h2>${avviso.titolo}</h2>
+                    <p>${avviso.testo}</p>
+                `;
+                container.appendChild(div);
+            });
+
+            let currentIndex = 0;
+            const slides = container.getElementsByClassName('avviso-card');
+
+            if (slides.length > 1) {
+                setInterval(() => {
+                    slides[currentIndex].classList.remove('attivo');
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    slides[currentIndex].classList.add('attivo');
+                }, 8000);
+            }
+        }
+        initAvvisiSlideshow();
+
+        // ==========================================
+        // 6. SLIDESHOW GALLERIA FOTOGRAFICA (CENTRO)
+        // ==========================================
+        const FOTO_URLS = [
+            'https://images.unsplash.com/photo-1523050854058-8df90110c9f1',
+            'https://images.unsplash.com/photo-1580582932707-520aed937b7b',
+            'https://images.unsplash.com/photo-1509062522246-3755977927d7'
+        ];
+
+        function initSlideshow() {
+            const container = document.
