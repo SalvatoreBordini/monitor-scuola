@@ -77,7 +77,7 @@
         <div class="flex items-center gap-4 bg-blue-900/70 border border-blue-700/60 rounded-2xl px-5 py-2 shadow-inner">
             <div class="text-right">
                 <div id="clock" class="text-3xl font-black text-white font-mono tracking-tight leading-none mb-0.5">00:00:00</div>
-                <div id="date" class="text-xs font-bold text-sky-200 capitalize">Caricamento data...</div>
+                <div id="date" class="text-xs font-bold text-sky-200 capitalize">Inizializzazione...</div>
             </div>
             <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow-sm">
                 <i class="fa-solid fa-clock"></i>
@@ -169,82 +169,3 @@
                 <span class="uppercase tracking-widest text-sky-200">Info Utili</span>
             </div>
             <div class="ticker-wrap flex-1">
-                <div id="tickerText" class="ticker text-sm font-semibold text-sky-100">
-                    Benvenuti all'Istituto Comprensivo • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico •
-                </div>
-            </div>
-            <div id="syncBadge" class="ml-3 text-[11px] bg-blue-900 px-2.5 py-1 rounded-lg text-sky-200 shrink-0 font-bold border border-blue-800">
-                <i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync Cloud
-            </div>
-        </div>
-    </footer>
-
-    <!-- SCRIPT JS -->
-    <script>
-        // URL dei Google Fogli CSV creati nel tuo Google Drive
-        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
-        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
-
-        let avvisiData = [];
-        let eventiData = [];
-
-        const photos = [
-            { caption: "Laboratorio Innovativo STEM e Robotica", svgBg: "from-blue-900 to-indigo-950", icon: "fa-laptop-code" },
-            { caption: "Iniziative Sportive e Attività all'Aperto", svgBg: "from-sky-800 to-blue-900", icon: "fa-volleyball" },
-            { caption: "Biblioteca Scolastica e Spazio Lettura", svgBg: "from-indigo-900 to-slate-900", icon: "fa-book-open" },
-            { caption: "Laboratorio d'Arte e Creatività", svgBg: "from-blue-950 to-sky-900", icon: "fa-palette" }
-        ];
-
-        let currentPhotoIndex = 0;
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
-            document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
-        function fetchGoogleSheetsData() {
-            const badgeEl = document.getElementById('syncBadge');
-            
-            Papa.parse(GOOGLE_SHEET_AVVISI_URL, {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    if(results.data && results.data.length > 0) {
-                        avvisiData = results.data.filter(item => item.Titolo);
-                        renderAvvisi();
-                    }
-                }
-            });
-
-            Papa.parse(GOOGLE_SHEET_EVENTI_URL, {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    if(results.data && results.data.length > 0) {
-                        eventiData = results.data.filter(item => item.Titolo);
-                        renderEventi();
-                        badgeEl.innerHTML = '<i class="fa-solid fa-cloud-arrow-down mr-1 text-emerald-300"></i> Cloud Sync';
-                    }
-                },
-                error: function() {
-                    badgeEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Cache Locale';
-                }
-            });
-        }
-
-        function renderAvvisi() {
-            const track = document.getElementById('avvisiTrack');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            // Filtro in base alla colonna "Scadenza" o "Data"
-            const avvisiValidi = avvisiData.filter(item => {
-                const dateToCheck = item.Scadenza || item.Data;
-                if (!dateToCheck) return true;
-                const d = new Date(dateToCheck);
-                return isNaN(d.getTime()) || d >= today;
-            });
-
-            if (avvisiValidi.length === 0) {
-                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun av
