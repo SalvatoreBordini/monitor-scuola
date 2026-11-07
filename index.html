@@ -85,54 +85,70 @@
         </div>
     </header>
 
-    <!-- MAIN GRID -->
-    <main class="flex-1 grid grid-cols-12 gap-5 p-5 min-h-0">
-        <!-- AVVISI -->
-        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+    <!-- MAIN GRID (4 COLONNE) -->
+    <main class="flex-1 grid grid-cols-12 gap-4 p-4 min-h-0">
+        <!-- COLONNA 1: AVVISI -->
+        <section class="col-span-3 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
-                <div class="flex items-center space-x-2.5">
-                    <span class="w-9 h-9 rounded-xl bg-blue-900 text-white flex items-center justify-center text-base shadow-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-xl bg-blue-900 text-white flex items-center justify-center text-sm shadow-sm">
                         <i class="fa-solid fa-bullhorn"></i>
                     </span>
-                    <h2 class="text-lg font-black text-blue-950 tracking-wide">Avvisi & Comunicazioni</h2>
+                    <h2 class="text-base font-black text-blue-950 tracking-wide">Avvisi & Comunicazioni</h2>
                 </div>
-                <span class="text-xs font-extrabold px-3 py-1 bg-blue-100 text-blue-900 rounded-full border border-blue-200">In evidenza</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-blue-100 text-blue-900 rounded-full border border-blue-200">Evidenza</span>
             </div>
             <div class="marquee-container flex-1">
                 <div id="avvisiTrack" class="marquee-track"></div>
             </div>
         </section>
 
-        <!-- FOTO SLIDER -->
-        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+        <!-- COLONNA 2: DISLOCAZIONE CLASSI & AULE -->
+        <section class="col-span-3 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-teal-900 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-xl bg-teal-900 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-door-open"></i>
+                    </span>
+                    <h2 class="text-base font-black text-teal-950 tracking-wide">Orario & Aule Classi</h2>
+                </div>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-teal-100 text-teal-900 rounded-full border border-teal-200">Oggi</span>
+            </div>
+            <div class="marquee-container flex-1">
+                <div id="orarioTrack" class="marquee-track"></div>
+            </div>
+        </section>
+
+        <!-- COLONNA 3: FOTO SLIDER -->
+        <section class="col-span-3 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
-                <div class="flex items-center space-x-2.5">
-                    <span class="w-9 h-9 rounded-xl bg-blue-900 text-white flex items-center justify-center text-base shadow-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-xl bg-blue-900 text-white flex items-center justify-center text-sm shadow-sm">
                         <i class="fa-solid fa-images"></i>
                     </span>
-                    <h2 class="text-lg font-black text-blue-950 tracking-wide">Vita Scolastica</h2>
+                    <h2 class="text-base font-black text-blue-950 tracking-wide">Vita Scolastica</h2>
                 </div>
-                <span class="text-xs font-extrabold px-3 py-1 bg-blue-100 text-blue-900 rounded-full border border-blue-200">Galleria</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-blue-100 text-blue-900 rounded-full border border-blue-200">Galleria</span>
             </div>
 
             <div class="relative flex-1 bg-sky-100/60 rounded-xl overflow-hidden shadow-inner">
                 <div id="photoSlider" class="w-full h-full relative"></div>
-                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-blue-200 shadow-lg">
+                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl border border-blue-200 shadow-lg">
                     <p id="photoCaption" class="text-xs font-extrabold text-blue-950 truncate">Caricamento foto...</p>
                 </div>
             </div>
         </section>
 
-        <!-- EVENTI -->
-        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+        <!-- COLONNA 4: EVENTI -->
+        <section class="col-span-3 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-indigo-900 shrink-0">
-                <div class="flex items-center space-x-2.5">
-                    <span class="w-9 h-9 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-base shadow-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-sm shadow-sm">
                         <i class="fa-solid fa-calendar-days"></i>
                     </span>
-                    <h2 class="text-lg font-black text-indigo-950 tracking-wide">Prossimi Eventi</h2>
+                    <h2 class="text-base font-black text-indigo-950 tracking-wide">Prossimi Eventi</h2>
                 </div>
-                <span class="text-xs font-extrabold px-3 py-1 bg-indigo-100 text-indigo-900 rounded-full border border-indigo-200">Calendario</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-indigo-100 text-indigo-900 rounded-full border border-indigo-200">Agenda</span>
             </div>
             <div class="marquee-container flex-1">
                 <div id="eventiTrack" class="marquee-track"></div>
@@ -142,23 +158,253 @@
 
     <!-- FOOTER -->
     <footer class="bg-white/95 backdrop-blur-md border-t border-sky-200 shrink-0 z-10 shadow-lg">
-        <!-- BARRA INFERIORE: ORARI SEGRETERIA + DOVE SI TROVA LA CLASSE -->
-        <div class="grid grid-cols-3 gap-4 px-6 py-2.5 border-b border-sky-200 bg-sky-50/60">
-            <!-- Segreteria Famiglie -->
-            <div class="flex items-center space-x-3 bg-white p-2.5 rounded-xl border-2 border-blue-200 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-blue-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+        <div class="grid grid-cols-2 gap-4 px-6 py-2 border-b border-sky-200 bg-sky-50/60">
+            <div class="flex items-center space-x-3 bg-white p-2 rounded-xl border-2 border-blue-200 shadow-sm">
+                <div class="w-9 h-9 rounded-xl bg-blue-900 text-white flex items-center justify-center text-base shrink-0 shadow">
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="truncate">
-                    <span class="text-xs font-black uppercase tracking-wider text-blue-950 block">Segreteria Famiglie / Alunni</span>
-                    <span class="text-xs font-bold text-slate-700 truncate block">Lun - Ven: 08:00 - 10:00</span>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-blue-950 block">Segreteria Famiglie / Alunni</span>
+                    <span id="orarioFamiglie" class="text-xs font-bold text-slate-700 truncate block">Lun - Ven: 08:00 - 10:00 | Mar e Gio: 15:00 - 16:30</span>
                 </div>
             </div>
-
-            <!-- Segreteria Personale -->
-            <div class="flex items-center space-x-3 bg-white p-2.5 rounded-xl border-2 border-indigo-200 shadow-sm">
-                <div class="w-10 h-10 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+            <div class="flex items-center space-x-3 bg-white p-2 rounded-xl border-2 border-indigo-200 shadow-sm">
+                <div class="w-9 h-9 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-base shrink-0 shadow">
                     <i class="fa-solid fa-id-card"></i>
                 </div>
                 <div class="truncate">
-                    <span class="text-xs font-black uppercase tracking-wider text-indigo-950
+                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-950 block">Segreteria Personale / Docenti</span>
+                    <span id="orarioPersonale" class="text-xs font-bold text-slate-700 truncate block">Lun - Ven: 11:30 - 13:30 | Mer: 14:30 - 16:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-2 bg-blue-950 text-white flex items-center justify-between text-xs font-bold relative border-t border-blue-900">
+            <div class="flex items-center space-x-2 shrink-0 bg-blue-900 px-3 py-1 rounded-lg z-10 shadow mr-3 border border-blue-800">
+                <i class="fa-solid fa-bell animate-pulse text-amber-300"></i>
+                <span class="uppercase tracking-widest text-sky-200">Info Utili</span>
+            </div>
+            <div class="ticker-wrap flex-1">
+                <div id="tickerText" class="ticker text-sm font-semibold text-sky-100">
+                    Benvenuti all'Istituto Comprensivo • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico •
+                </div>
+            </div>
+            <div id="syncBadge" class="ml-3 text-[11px] bg-blue-900 px-2.5 py-1 rounded-lg text-sky-200 shrink-0 font-bold border border-blue-800">
+                <i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync Cloud
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT JS -->
+    <script>
+        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
+        const GOOGLE_SHEET_ORARIO_URL = 'https://docs.google.com/spreadsheets/d/1_Wwj6mVvzrXlsP4u32t4L07kq9T5A08gncZsuygY1Lc/export?format=csv';
+
+        let avvisiData = [];
+        let eventiData = [];
+        let orarioData = [];
+
+        const photos = [
+            { caption: "Laboratorio Innovativo STEM e Robotica", svgBg: "from-blue-900 to-indigo-950", icon: "fa-laptop-code" },
+            { caption: "Iniziative Sportive e Attività all'Aperto", svgBg: "from-sky-800 to-blue-900", icon: "fa-volleyball" },
+            { caption: "Biblioteca Scolastica e Spazio Lettura", svgBg: "from-indigo-900 to-slate-900", icon: "fa-book-open" },
+            { caption: "Laboratorio d'Arte e Creatività", svgBg: "from-blue-950 to-sky-900", icon: "fa-palette" }
+        ];
+
+        let currentPhotoIndex = 0;
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+            document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function fetchGoogleSheetsData() {
+            const badgeEl = document.getElementById('syncBadge');
+            
+            Papa.parse(GOOGLE_SHEET_AVVISI_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    if(results.data && results.data.length > 0) {
+                        avvisiData = results.data.filter(item => item.Titolo);
+                        renderAvvisi();
+                    }
+                }
+            });
+
+            Papa.parse(GOOGLE_SHEET_EVENTI_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    if(results.data && results.data.length > 0) {
+                        eventiData = results.data.filter(item => item.Titolo);
+                        renderEventi();
+                    }
+                }
+            });
+
+            Papa.parse(GOOGLE_SHEET_ORARIO_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    if(results.data && results.data.length > 0) {
+                        orarioData = results.data.filter(item => item.Classe || item.Aula);
+                        renderOrario();
+                        badgeEl.innerHTML = '<i class="fa-solid fa-cloud-arrow-down mr-1 text-emerald-300"></i> Cloud Sync';
+                    }
+                },
+                error: function() {
+                    badgeEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Cache Locale';
+                }
+            });
+        }
+
+        function renderAvvisi() {
+            const track = document.getElementById('avvisiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const avvisiValidi = avvisiData.filter(item => {
+                const dateToCheck = item.Scadenza || item.Data;
+                if (!dateToCheck) return true;
+                const d = new Date(dateToCheck);
+                return isNaN(d.getTime()) || d >= today;
+            });
+
+            if (avvisiValidi.length === 0) {
+                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun avviso attivo.</div>`;
+                return;
+            }
+
+            const html = avvisiValidi.map(item => {
+                const isEvidenza = item.InEvidenza && item.InEvidenza.toUpperCase() === 'SI';
+                
+                const cardStyle = isEvidenza 
+                    ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
+                    : 'bg-white border-2 border-blue-100 shadow-md';
+                    
+                const badgeStyle = isEvidenza
+                    ? 'bg-amber-600 text-white animate-pulse'
+                    : 'bg-blue-900 text-white';
+
+                return `
+                    <div class="${cardStyle} p-3.5 rounded-xl transition-all">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[10px] font-black px-2 py-0.5 ${badgeStyle} rounded-md uppercase tracking-wider">
+                                ${isEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (item.Badge || 'AVVISO')}
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">${item.Data || ''}</span>
+                        </div>
+                        <h3 class="text-sm font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1 leading-snug">${item.Titolo}</h3>
+                        <p class="text-xs font-medium text-slate-700 leading-relaxed">${item.Testo}</p>
+                    </div>
+                `;
+            }).join('');
+
+            track.innerHTML = html + html;
+        }
+
+        function renderOrario() {
+            const track = document.getElementById('orarioTrack');
+            if (orarioData.length === 0) {
+                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-teal-100 text-center text-slate-500 font-bold">Orario non disponibile.</div>`;
+                return;
+            }
+
+            const html = orarioData.map(item => `
+                <div class="bg-white p-3.5 rounded-xl border-2 border-teal-100 shadow-md flex items-center space-x-3">
+                    <div class="bg-teal-900 text-white rounded-xl p-2 text-center shrink-0 w-14 shadow-sm">
+                        <span class="block text-xs font-black uppercase leading-none">${item.Classe || 'CLASSE'}</span>
+                        <span class="block text-[10px] font-bold text-teal-200 mt-1">${item.Orario ? item.Orario.split('-')[0] : ''}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <h3 class="text-xs font-black text-slate-900 truncate">${item.Aula || 'Aula'}</h3>
+                            <span class="text-[10px] font-extrabold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 shrink-0">${item.Orario || ''}</span>
+                        </div>
+                        <p class="text-xs font-bold text-teal-900 truncate">${item['Attività / Docente'] || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            track.innerHTML = html + html;
+        }
+
+        function renderEventi() {
+            const track = document.getElementById('eventiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const eventiValidi = eventiData.filter(item => {
+                const dateToCheck = item.Scadenza || item.Data;
+                if (!dateToCheck) return true;
+                const d = new Date(dateToCheck);
+                return isNaN(d.getTime()) || d >= today;
+            });
+
+            if (eventiValidi.length === 0) {
+                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento in programma.</div>`;
+                return;
+            }
+
+            const html = eventiValidi.map(item => `
+                <div class="bg-white p-3.5 rounded-xl border-2 border-indigo-100 shadow-md flex items-center space-x-3">
+                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-2 text-center shrink-0 w-16">
+                        <span class="block text-xs font-black text-indigo-900 uppercase leading-none">${item.Giorno}</span>
+                        <span class="block text-[10px] font-bold text-indigo-600 mt-1">${item.Ora}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-extrabold text-indigo-950 truncate mb-0.5">${item.Titolo}</h3>
+                        <p class="text-xs font-bold text-slate-500 flex items-center truncate">
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+            track.innerHTML = html + html;
+        }
+
+        function initPhotoSlider() {
+            const slider = document.getElementById('photoSlider');
+            slider.innerHTML = photos.map((photo, index) => `
+                <div class="photo-slide absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${photo.svgBg} transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                    <i class="fa-solid ${photo.icon} text-white/50 text-7xl mb-2 drop-shadow-lg"></i>
+                    <span class="text-white/80 text-[10px] font-bold uppercase tracking-widest">Spazio Scuola</span>
+                </div>
+            `).join('');
+            
+            updatePhotoCaption();
+            setInterval(nextPhoto, 6000);
+        }
+
+        function nextPhoto() {
+            const slides = document.querySelectorAll('.photo-slide');
+            if(slides.length === 0) return;
+            slides[currentPhotoIndex].classList.remove('opacity-100');
+            slides[currentPhotoIndex].classList.add('opacity-0');
+
+            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+
+            slides[currentPhotoIndex].classList.remove('opacity-0');
+            slides[currentPhotoIndex].classList.add('opacity-100');
+
+            updatePhotoCaption();
+        }
+
+        function updatePhotoCaption() {
+            document.getElementById('photoCaption').textContent = photos[currentPhotoIndex].caption;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+            initPhotoSlider();
+            fetchGoogleSheetsData();
+
+            setInterval(fetchGoogleSheetsData, 120000);
+        });
+    </script>
+</body>
+</html>
