@@ -28,7 +28,6 @@
             gap: 1rem;
         }
 
-        /* Classe attivata via JS solo se i contenuti superano l'altezza */
         .scrolling-active {
             animation: scrollDown 45s linear infinite;
         }
@@ -68,6 +67,20 @@
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col text-slate-900 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
+
+    <!-- SCHERMATA MODALITÀ NOTTURNA (RISPARMIO ENERGETICO) -->
+    <div id="nightModeOverlay" class="fixed inset-0 bg-slate-950 text-white z-50 flex flex-col items-center justify-center p-8 hidden">
+        <div class="w-24 h-24 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-3xl flex items-center justify-center shadow-2xl mb-6 shadow-sky-500/20">
+            <i class="fa-solid fa-graduation-cap text-5xl"></i>
+        </div>
+        <h1 class="text-3xl font-black tracking-tight mb-2 text-sky-200">Istituto Comprensivo "Gianni Rodari"</h1>
+        <p class="text-sm font-bold text-slate-400 mb-10 tracking-widest uppercase">Modalità Notturna Attiva • Scuola Chiusa</p>
+        
+        <div class="bg-slate-900/80 border border-slate-800 rounded-3xl px-12 py-8 text-center shadow-2xl backdrop-blur-xl">
+            <div id="nightClock" class="text-7xl font-black font-mono text-white tracking-widest mb-3">00:00:00</div>
+            <div id="nightDate" class="text-sm font-bold text-sky-400 capitalize">Caricamento data...</div>
+        </div>
+    </div>
 
     <!-- HEADER SUPERIORE -->
     <header class="h-24 px-6 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-lg z-10 shrink-0 border-b border-blue-900">
@@ -117,7 +130,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 2: FOTO SCUOLA (SLIDER) -->
+        <!-- COLONNA 2: FOTO SCUOLA (SLIDER DA GOOGLE FOGLI) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -137,7 +150,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 3: PROSSIMI EVENTI (PROSSIMI 15 GIORNI) -->
+        <!-- COLONNA 3: PROSSIMI EVENTI (15 GIORNI) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-indigo-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -154,7 +167,7 @@
         </section>
     </main>
 
-    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI FILTRATE PER GIORNO E ORA -->
+    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI -->
     <section class="px-5 py-2 shrink-0">
         <div class="glass-card rounded-2xl p-3 flex items-center space-x-4 overflow-hidden border-2 border-sky-300 shadow-md">
             <div class="flex items-center space-x-2.5 bg-sky-900 text-white px-3.5 py-2 rounded-xl shrink-0 shadow">
@@ -215,22 +228,31 @@
         const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
         const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
         const GOOGLE_SHEET_CLASSI_URL = 'https://docs.google.com/spreadsheets/d/1BWJ_fMdmOskpo98ymI7efCNjiDU9FS8RJWicVE2cCeQ/export?format=csv';
+        const GOOGLE_SHEET_FOTO_URL = 'https://docs.google.com/spreadsheets/d/1fvZLjauon0OXHjLRwXkK3X14cq1So63KzS-ZuPp6Y0w/export?format=csv';
 
         let avvisiData = [];
         let eventiData = [];
         let classiData = [];
-
-        const photos = [
-            { caption: "Laboratorio Innovativo STEM e Robotica", svgBg: "from-blue-900 to-indigo-950", icon: "fa-laptop-code" },
-            { caption: "Iniziative Sportive e Attività all'Aperto", svgBg: "from-sky-800 to-blue-900", icon: "fa-volleyball" },
-            { caption: "Biblioteca Scolastica e Spazio Lettura", svgBg: "from-indigo-900 to-slate-900", icon: "fa-book-open" },
-            { caption: "Laboratorio d'Arte e Creatività", svgBg: "from-blue-950 to-sky-900", icon: "fa-palette" }
-        ];
-
+        let photosData = [];
         let currentPhotoIndex = 0;
 
         function updateClock() {
             const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const timeInMinutes = hours * 60 + minutes;
+
+            // CONTROLLO MODALITÀ NOTTURNA (Dalle 19:00 [1140 min] alle 07:30 [450 min])
+            const nightOverlay = document.getElementById('nightModeOverlay');
+            if (timeInMinutes >= 1140 || timeInMinutes < 450) {
+                nightOverlay.classList.remove('hidden');
+                document.getElementById('nightClock').textContent = now.toLocaleTimeString('it-IT');
+                document.getElementById('nightDate').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                return; // Ferma l'esecuzione diurna
+            } else {
+                nightOverlay.classList.add('hidden');
+            }
+
             document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
             document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             renderClassiOrizzontaliPerOraCorrente();
@@ -257,6 +279,7 @@
         function fetchGoogleSheetsData() {
             const badgeEl = document.getElementById('syncBadge');
             
+            // Scarica Avvisi
             Papa.parse(GOOGLE_SHEET_AVVISI_URL, {
                 download: true,
                 header: true,
@@ -268,6 +291,7 @@
                 }
             });
 
+            // Scarica Eventi
             Papa.parse(GOOGLE_SHEET_EVENTI_URL, {
                 download: true,
                 header: true,
@@ -283,6 +307,7 @@
                 }
             });
 
+            // Scarica Aule Classi
             if(GOOGLE_SHEET_CLASSI_URL) {
                 Papa.parse(GOOGLE_SHEET_CLASSI_URL, {
                     download: true,
@@ -291,6 +316,20 @@
                         if(results.data && results.data.length > 0) {
                             classiData = results.data.filter(item => item.Classe);
                             renderClassiOrizzontaliPerOraCorrente();
+                        }
+                    }
+                });
+            }
+
+            // Scarica Galleria Foto da Google Foglio
+            if(GOOGLE_SHEET_FOTO_URL) {
+                Papa.parse(GOOGLE_SHEET_FOTO_URL, {
+                    download: true,
+                    header: true,
+                    complete: function(results) {
+                        if(results.data && results.data.length > 0) {
+                            photosData = results.data.filter(item => item.URLImmagine);
+                            initPhotoSlider();
                         }
                     }
                 });
@@ -361,10 +400,8 @@
             checkScrollNeed('avvisiContainer', 'avvisiTrack');
         }
 
-        // Eventi filtrati per i prossimi 15 giorni con grafica pulita
         function renderEventi() {
             const track = document.getElementById('eventiTrack');
-            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
@@ -442,12 +479,17 @@
             track.innerHTML = html + html;
         }
 
+        // Slider foto alimentato dal Google Foglio dedicato
         function initPhotoSlider() {
             const slider = document.getElementById('photoSlider');
-            slider.innerHTML = photos.map((photo, index) => `
-                <div class="photo-slide absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${photo.svgBg} transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
-                    <i class="fa-solid ${photo.icon} text-white/50 text-8xl mb-3 drop-shadow-lg"></i>
-                    <span class="text-white/80 text-xs font-bold uppercase tracking-widest">Spazio Scuola</span>
+            if (photosData.length === 0) {
+                slider.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">Nessuna foto disponibile</div>`;
+                return;
+            }
+
+            slider.innerHTML = photosData.map((photo, index) => `
+                <div class="photo-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}" 
+                     style="background-image: url('${photo.URLImmagine}')">
                 </div>
             `).join('');
             
@@ -456,12 +498,14 @@
         }
 
         function nextPhoto() {
+            if(photosData.length === 0) return;
             const slides = document.querySelectorAll('.photo-slide');
             if(slides.length === 0) return;
+            
             slides[currentPhotoIndex].classList.remove('opacity-100');
             slides[currentPhotoIndex].classList.add('opacity-0');
 
-            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+            currentPhotoIndex = (currentPhotoIndex + 1) % photosData.length;
 
             slides[currentPhotoIndex].classList.remove('opacity-0');
             slides[currentPhotoIndex].classList.add('opacity-100');
@@ -470,13 +514,14 @@
         }
 
         function updatePhotoCaption() {
-            document.getElementById('photoCaption').textContent = photos[currentPhotoIndex].caption;
+            if(photosData[currentPhotoIndex]) {
+                document.getElementById('photoCaption').textContent = photosData[currentPhotoIndex].Titolo;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
             setInterval(updateClock, 1000);
-            initPhotoSlider();
             fetchGoogleSheetsData();
 
             setInterval(fetchGoogleSheetsData, 120000);
