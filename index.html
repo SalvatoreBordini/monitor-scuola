@@ -181,8 +181,9 @@
 
     <!-- SCRIPT JS -->
     <script>
-        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTglKka0W4NipKw8Gb89EXawHFM-xrP1nCx-kErAQdCXqAz3ZXEPDa35ZV5Nk_W3LhT-8D0JWmfLvwh/pub?output=csv';
-        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
+        // URL dei Google Fogli CSV creati nel tuo Google Drive
+        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
 
         let avvisiData = [];
         let eventiData = [];
@@ -246,111 +247,4 @@
             });
 
             if (avvisiValidi.length === 0) {
-                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun avviso attivo.</div>`;
-                return;
-            }
-
-            const html = avvisiValidi.map(item => {
-                const isEvidenza = item.InEvidenza && item.InEvidenza.toUpperCase() === 'SI';
-                
-                const cardStyle = isEvidenza 
-                    ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
-                    : 'bg-white border-2 border-blue-100 shadow-md';
-                    
-                const badgeStyle = isEvidenza
-                    ? 'bg-amber-600 text-white animate-pulse'
-                    : 'bg-blue-900 text-white';
-
-                return `
-                    <div class="${cardStyle} p-4 rounded-xl transition-all">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[11px] font-black px-2.5 py-1 ${badgeStyle} rounded-md uppercase tracking-wider">
-                                ${isEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (item.Badge || 'AVVISO')}
-                            </span>
-                            <span class="text-xs font-bold text-slate-400">${item.Data || ''}</span>
-                        </div>
-                        <h3 class="text-base font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1 leading-snug">${item.Titolo}</h3>
-                        <p class="text-sm font-medium text-slate-700 leading-relaxed">${item.Testo}</p>
-                    </div>
-                `;
-            }).join('');
-
-            track.innerHTML = html + html;
-        }
-
-        function renderEventi() {
-            const track = document.getElementById('eventiTrack');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const eventiValidi = eventiData.filter(item => {
-                const dateToCheck = item.Scadenza || item.Data;
-                if (!dateToCheck) return true;
-                const d = new Date(dateToCheck);
-                return isNaN(d.getTime()) || d >= today;
-            });
-
-            if (eventiValidi.length === 0) {
-                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento in programma.</div>`;
-                return;
-            }
-
-            const html = eventiValidi.map(item => `
-                <div class="bg-white p-4 rounded-xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
-                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-2.5 text-center shrink-0 w-20">
-                        <span class="block text-xs font-black text-indigo-900 uppercase leading-none">${item.Giorno}</span>
-                        <span class="block text-xs font-bold text-indigo-600 mt-1">${item.Ora}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-extrabold text-indigo-950 truncate mb-1">${item.Titolo}</h3>
-                        <p class="text-xs font-bold text-slate-500 flex items-center truncate">
-                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo}
-                        </p>
-                    </div>
-                </div>
-            `).join('');
-            track.innerHTML = html + html;
-        }
-
-        function initPhotoSlider() {
-            const slider = document.getElementById('photoSlider');
-            slider.innerHTML = photos.map((photo, index) => `
-                <div class="photo-slide absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${photo.svgBg} transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
-                    <i class="fa-solid ${photo.icon} text-white/50 text-8xl mb-3 drop-shadow-lg"></i>
-                    <span class="text-white/80 text-xs font-bold uppercase tracking-widest">Spazio Scuola</span>
-                </div>
-            `).join('');
-            
-            updatePhotoCaption();
-            setInterval(nextPhoto, 6000);
-        }
-
-        function nextPhoto() {
-            const slides = document.querySelectorAll('.photo-slide');
-            if(slides.length === 0) return;
-            slides[currentPhotoIndex].classList.remove('opacity-100');
-            slides[currentPhotoIndex].classList.add('opacity-0');
-
-            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-
-            slides[currentPhotoIndex].classList.remove('opacity-0');
-            slides[currentPhotoIndex].classList.add('opacity-100');
-
-            updatePhotoCaption();
-        }
-
-        function updatePhotoCaption() {
-            document.getElementById('photoCaption').textContent = photos[currentPhotoIndex].caption;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateClock();
-            setInterval(updateClock, 1000);
-            initPhotoSlider();
-            fetchGoogleSheetsData();
-
-            setInterval(fetchGoogleSheetsData, 120000);
-        });
-    </script>
-</body>
-</html>
+                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun av
