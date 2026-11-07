@@ -15,6 +15,7 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; background-color: #f0f7ff; }
 
+        /* Container verticale con maschera */
         .marquee-container {
             position: relative;
             overflow: hidden;
@@ -27,6 +28,7 @@
             gap: 1rem;
         }
 
+        /* Classe attivata via JS solo se i contenuti superano l'altezza */
         .scrolling-active {
             animation: scrollDown 45s linear infinite;
         }
@@ -38,6 +40,7 @@
             100% { transform: translateY(-50%); }
         }
 
+        /* Scorrimento orizzontale */
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 40s linear infinite; }
         .ticker-wrap:hover .ticker { animation-play-state: paused; }
@@ -134,7 +137,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 3: PROSSIMI EVENTI -->
+        <!-- COLONNA 3: PROSSIMI EVENTI (PROSSIMI 15 GIORNI) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-indigo-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -143,7 +146,7 @@
                     </span>
                     <h2 class="text-lg font-black text-indigo-950 tracking-wide">Prossimi Eventi</h2>
                 </div>
-                <span class="text-xs font-extrabold px-3 py-1 bg-indigo-100 text-indigo-900 rounded-full border border-indigo-200">Calendario</span>
+                <span class="text-xs font-extrabold px-3 py-1 bg-indigo-100 text-indigo-900 rounded-full border border-indigo-200">15 Giorni</span>
             </div>
             <div id="eventiContainer" class="marquee-container flex-1">
                 <div id="eventiTrack" class="marquee-track"></div>
@@ -151,7 +154,7 @@
         </section>
     </main>
 
-    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI (FILTRATE PER GIORNO E ORA) -->
+    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI FILTRATE PER GIORNO E ORA -->
     <section class="px-5 py-2 shrink-0">
         <div class="glass-card rounded-2xl p-3 flex items-center space-x-4 overflow-hidden border-2 border-sky-300 shadow-md">
             <div class="flex items-center space-x-2.5 bg-sky-900 text-white px-3.5 py-2 rounded-xl shrink-0 shadow">
@@ -210,7 +213,7 @@
     <!-- SCRIPT JS -->
     <script>
         const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
-        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
         const GOOGLE_SHEET_CLASSI_URL = 'https://docs.google.com/spreadsheets/d/1BWJ_fMdmOskpo98ymI7efCNjiDU9FS8RJWicVE2cCeQ/export?format=csv';
 
         let avvisiData = [];
@@ -358,40 +361,46 @@
             checkScrollNeed('avvisiContainer', 'avvisiTrack');
         }
 
-        /* RENDERING EVENTI GRAFICAMENTE RIFINITO E AD ALTA LEGGIBILITÀ */
+        // Eventi filtrati per i prossimi 15 giorni con grafica pulita
         function renderEventi() {
             const track = document.getElementById('eventiTrack');
+            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
+            const limitDate = new Date(today);
+            limitDate.setDate(today.getDate() + 15);
+            limitDate.setHours(23, 59, 59, 999);
+
             const eventiValidi = eventiData.filter(item => {
                 const dateToCheck = item.Scadenza || item.Data;
-                if (!dateToCheck) return true;
+                if (!dateToCheck) return false;
+                
                 const d = new Date(dateToCheck);
-                return isNaN(d.getTime()) || d >= today;
+                if (isNaN(d.getTime())) return false;
+
+                return d >= today && d <= limitDate;
             });
 
             if (eventiValidi.length === 0) {
-                track.dataset.singleHtml = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento in programma.</div>`;
+                track.dataset.singleHtml = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento nei prossimi 15 giorni.</div>`;
                 checkScrollNeed('eventiContainer', 'eventiTrack');
                 return;
             }
 
             track.dataset.singleHtml = eventiValidi.map(item => `
                 <div class="bg-white p-4 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
-                    <!-- Data & Ora Badge -->
                     <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-xl px-3 py-2 text-center text-white shrink-0 min-w-[5.5rem] shadow-sm">
-                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || '10/11/2026'}</span>
-                        <span class="block text-sm font-extrabold text-white font-mono mt-0.5">${item.Ora || '14:30 - 15:15'}</span>
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data}</span>
+                        <span class="block text-sm font-extrabold text-white font-mono mt-0.5">${item.Ora || ''}</span>
                     </div>
-                    <!-- Dettagli Evento -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
-                            <h3 class="text-base font-black text-indigo-950 leading-snug truncate">${item.Titolo || 'CdC 1ª A'}</h3>
+                            <h3 class="text-base font-black text-indigo-950 leading-snug truncate">${item.Titolo}</h3>
                         </div>
                         ${item.Nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-[11px] font-bold px-2 py-0.5 rounded-md mb-1">${item.Nota}</span>` : ''}
                         <p class="text-xs font-bold text-slate-500 flex items-center truncate">
-                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Aula Alighieri'}
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Sede dell\'istituto'}
                         </p>
                     </div>
                 </div>
