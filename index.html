@@ -59,10 +59,10 @@
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(186, 214, 245, 0.8);
-            box-shadow: 0 10px 30px -5px rgba(147, 197, 253, 0.4);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(186, 214, 245, 0.9);
+            box-shadow: 0 15px 35px -5px rgba(147, 197, 253, 0.35);
         }
     </style>
 </head>
@@ -70,9 +70,7 @@
 
     <!-- SCHERMATA MODALITÀ NOTTURNA (RISPARMIO ENERGETICO) -->
     <div id="nightModeOverlay" class="fixed inset-0 bg-slate-950 text-white z-50 flex flex-col items-center justify-center p-8 hidden">
-        <div class="w-24 h-24 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-3xl flex items-center justify-center shadow-2xl mb-6 shadow-sky-500/20">
-            <i class="fa-solid fa-graduation-cap text-5xl"></i>
-        </div>
+        <div id="nightLogoContainer" class="w-24 h-24 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-3xl flex items-center justify-center shadow-2xl mb-6 shadow-sky-500/20 overflow-hidden p-2"></div>
         <h1 class="text-3xl font-black tracking-tight mb-2 text-sky-200">Istituto Comprensivo "Gianni Rodari"</h1>
         <p class="text-sm font-bold text-slate-400 mb-10 tracking-widest uppercase">Modalità Notturna Attiva • Scuola Chiusa</p>
         
@@ -83,11 +81,9 @@
     </div>
 
     <!-- HEADER SUPERIORE -->
-    <header class="h-24 px-6 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-lg z-10 shrink-0 border-b border-blue-900">
+    <header class="h-24 px-6 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-xl z-10 shrink-0 border-b border-blue-900">
         <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0">
-                <i class="fa-solid fa-graduation-cap text-3xl"></i>
-            </div>
+            <div id="headerLogoContainer" class="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0 p-1.5 backdrop-blur-sm"></div>
             <div>
                 <h1 id="schoolName" class="text-2xl font-black text-white tracking-tight leading-none mb-1.5">
                     Istituto Comprensivo "Gianni Rodari"
@@ -130,7 +126,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 2: FOTO SCUOLA (SLIDER DA GOOGLE FOGLI) -->
+        <!-- COLONNA 2: FOTO SCUOLA (SLIDER) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -150,7 +146,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 3: PROSSIMI EVENTI (15 GIORNI) -->
+        <!-- COLONNA 3: PROSSIMI EVENTI -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-indigo-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -225,6 +221,8 @@
 
     <!-- SCRIPT JS -->
     <script>
+        const SCHOOL_LOGO_URL = ''; 
+
         const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
         const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
         const GOOGLE_SHEET_CLASSI_URL = 'https://docs.google.com/spreadsheets/d/1BWJ_fMdmOskpo98ymI7efCNjiDU9FS8RJWicVE2cCeQ/export?format=csv';
@@ -236,19 +234,31 @@
         let photosData = [];
         let currentPhotoIndex = 0;
 
+        function initSchoolLogo() {
+            const headerContainer = document.getElementById('headerLogoContainer');
+            const nightContainer = document.getElementById('nightLogoContainer');
+
+            if (SCHOOL_LOGO_URL && SCHOOL_LOGO_URL.trim() !== '') {
+                headerContainer.innerHTML = `<img src="${SCHOOL_LOGO_URL}" alt="Logo Scuola" class="max-w-full max-h-full object-contain">`;
+                nightContainer.innerHTML = `<img src="${SCHOOL_LOGO_URL}" alt="Logo Scuola" class="max-w-full max-h-full object-contain">`;
+            } else {
+                headerContainer.innerHTML = `<i class="fa-solid fa-graduation-cap text-3xl text-sky-300"></i>`;
+                nightContainer.innerHTML = `<i class="fa-solid fa-graduation-cap text-5xl text-white"></i>`;
+            }
+        }
+
         function updateClock() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const timeInMinutes = hours * 60 + minutes;
 
-            // CONTROLLO MODALITÀ NOTTURNA (Dalle 19:00 [1140 min] alle 07:30 [450 min])
             const nightOverlay = document.getElementById('nightModeOverlay');
             if (timeInMinutes >= 1140 || timeInMinutes < 450) {
                 nightOverlay.classList.remove('hidden');
                 document.getElementById('nightClock').textContent = now.toLocaleTimeString('it-IT');
                 document.getElementById('nightDate').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                return; // Ferma l'esecuzione diurna
+                return;
             } else {
                 nightOverlay.classList.add('hidden');
             }
@@ -279,7 +289,6 @@
         function fetchGoogleSheetsData() {
             const badgeEl = document.getElementById('syncBadge');
             
-            // Scarica Avvisi
             Papa.parse(GOOGLE_SHEET_AVVISI_URL, {
                 download: true,
                 header: true,
@@ -291,7 +300,6 @@
                 }
             });
 
-            // Scarica Eventi
             Papa.parse(GOOGLE_SHEET_EVENTI_URL, {
                 download: true,
                 header: true,
@@ -307,7 +315,6 @@
                 }
             });
 
-            // Scarica Aule Classi
             if(GOOGLE_SHEET_CLASSI_URL) {
                 Papa.parse(GOOGLE_SHEET_CLASSI_URL, {
                     download: true,
@@ -321,7 +328,6 @@
                 });
             }
 
-            // Scarica Galleria Foto da Google Foglio
             if(GOOGLE_SHEET_FOTO_URL) {
                 Papa.parse(GOOGLE_SHEET_FOTO_URL, {
                     download: true,
@@ -479,7 +485,6 @@
             track.innerHTML = html + html;
         }
 
-        // Slider foto alimentato dal Google Foglio dedicato
         function initPhotoSlider() {
             const slider = document.getElementById('photoSlider');
             if (photosData.length === 0) {
@@ -520,6 +525,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initSchoolLogo();
             updateClock();
             setInterval(updateClock, 1000);
             fetchGoogleSheetsData();
