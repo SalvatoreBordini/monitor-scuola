@@ -15,7 +15,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; background-color: #f0f7ff; }
 
-        /* Container con maschera di trasparenza */
         .marquee-container {
             position: relative;
             overflow: hidden;
@@ -28,7 +27,6 @@
             gap: 1rem;
         }
 
-        /* Classe attiva solo se ci sono tanti elementi che richiedono lo scorrimento */
         .scrolling-active {
             animation: scrollDown 45s linear infinite;
         }
@@ -40,7 +38,6 @@
             100% { transform: translateY(-50%); }
         }
 
-        /* Scorrimento orizzontale per ticker e aule */
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 40s linear infinite; }
         .ticker-wrap:hover .ticker { animation-play-state: paused; }
@@ -154,7 +151,7 @@
         </section>
     </main>
 
-    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI -->
+    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI (FILTRATE PER GIORNO E ORA) -->
     <section class="px-5 py-2 shrink-0">
         <div class="glass-card rounded-2xl p-3 flex items-center space-x-4 overflow-hidden border-2 border-sky-300 shadow-md">
             <div class="flex items-center space-x-2.5 bg-sky-900 text-white px-3.5 py-2 rounded-xl shrink-0 shadow">
@@ -212,27 +209,13 @@
 
     <!-- SCRIPT JS -->
     <script>
-        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTglKka0W4NipKw8Gb89EXawHFM-xrP1nCx-kErAQdCXqAz3ZXEPDa35ZV5Nk_W3LhT-8D0JWmfLvwh/pub?output=csv';
-        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
-        const GOOGLE_SHEET_CLASSI_URL = '';
+        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
+        const GOOGLE_SHEET_CLASSI_URL = 'https://docs.google.com/spreadsheets/d/1BWJ_fMdmOskpo98ymI7efCNjiDU9FS8RJWicVE2cCeQ/export?format=csv';
 
         let avvisiData = [];
         let eventiData = [];
-        let classiData = [
-            { Classe: '1ª A', Ora: '1° Ora', Aula: 'Aula 101' },
-            { Classe: '1ª B', Ora: '1° Ora', Aula: 'Aula 102' },
-            { Classe: '2ª A', Ora: '1° Ora', Aula: 'Lab. Multimediale' },
-            { Classe: '2ª B', Ora: '1° Ora', Aula: 'Aula 104' },
-            { Classe: '3ª A', Ora: '1° Ora', Aula: 'Aula Magna' },
-            { Classe: '3ª B', Ora: '1° Ora', Aula: 'Palestra King' },
-            
-            { Classe: '1ª A', Ora: '2° Ora', Aula: 'Lab. Scienze' },
-            { Classe: '1ª B', Ora: '2° Ora', Aula: 'Aula 102' },
-            { Classe: '2ª A', Ora: '2° Ora', Aula: 'Aula 103' },
-            { Classe: '2ª B', Ora: '2° Ora', Aula: 'Palestra' },
-            { Classe: '3ª A', Ora: '2° Ora', Aula: 'Aula 105' },
-            { Classe: '3ª B', Ora: '2° Ora', Aula: 'Aula 106' }
-        ];
+        let classiData = [];
 
         const photos = [
             { caption: "Laboratorio Innovativo STEM e Robotica", svgBg: "from-blue-900 to-indigo-950", icon: "fa-laptop-code" },
@@ -248,6 +231,11 @@
             document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
             document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             renderClassiOrizzontaliPerOraCorrente();
+        }
+
+        function getGiornoCorrente() {
+            const giorni = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+            return giorni[new Date().getDay()];
         }
 
         function getOraScolasticaCorrente() {
@@ -291,15 +279,26 @@
                     badgeEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Cache Locale';
                 }
             });
+
+            if(GOOGLE_SHEET_CLASSI_URL) {
+                Papa.parse(GOOGLE_SHEET_CLASSI_URL, {
+                    download: true,
+                    header: true,
+                    complete: function(results) {
+                        if(results.data && results.data.length > 0) {
+                            classiData = results.data.filter(item => item.Classe);
+                            renderClassiOrizzontaliPerOraCorrente();
+                        }
+                    }
+                });
+            }
         }
 
-        // Funzione intelligente per attivare lo scorrimento solo se l'altezza del contenuto supera il box
         function checkScrollNeed(containerId, trackId) {
             const container = document.getElementById(containerId);
             const track = document.getElementById(trackId);
             
             setTimeout(() => {
-                // Rimuove temporaneamente la duplicazione per misurare l'altezza reale degli elementi originali
                 const singleHtml = track.dataset.singleHtml;
                 if (!singleHtml) return;
                 
@@ -308,11 +307,9 @@
                 const containerHeight = container.clientHeight;
 
                 if (contentHeight > containerHeight) {
-                    // Se superano lo spazio, duplica il contenuto per lo scorrimento continuo e attiva l'animazione
                     track.innerHTML = singleHtml + singleHtml;
                     track.classList.add('scrolling-active');
                 } else {
-                    // Se sono pochi, rimangono fissi senza scorrere
                     track.innerHTML = singleHtml;
                     track.classList.remove('scrolling-active');
                 }
@@ -361,6 +358,7 @@
             checkScrollNeed('avvisiContainer', 'avvisiTrack');
         }
 
+        /* RENDERING EVENTI GRAFICAMENTE RIFINITO E AD ALTA LEGGIBILITÀ */
         function renderEventi() {
             const track = document.getElementById('eventiTrack');
             const today = new Date();
@@ -380,15 +378,20 @@
             }
 
             track.dataset.singleHtml = eventiValidi.map(item => `
-                <div class="bg-white p-4 rounded-xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
-                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-2.5 text-center shrink-0 w-20">
-                        <span class="block text-xs font-black text-indigo-900 uppercase leading-none">${item.Giorno}</span>
-                        <span class="block text-xs font-bold text-indigo-600 mt-1">${item.Ora}</span>
+                <div class="bg-white p-4 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
+                    <!-- Data & Ora Badge -->
+                    <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-xl px-3 py-2 text-center text-white shrink-0 min-w-[5.5rem] shadow-sm">
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || '10/11/2026'}</span>
+                        <span class="block text-sm font-extrabold text-white font-mono mt-0.5">${item.Ora || '14:30 - 15:15'}</span>
                     </div>
+                    <!-- Dettagli Evento -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-extrabold text-indigo-950 truncate mb-1">${item.Titolo}</h3>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-black text-indigo-950 leading-snug truncate">${item.Titolo || 'CdC 1ª A'}</h3>
+                        </div>
+                        ${item.Nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-[11px] font-bold px-2 py-0.5 rounded-md mb-1">${item.Nota}</span>` : ''}
                         <p class="text-xs font-bold text-slate-500 flex items-center truncate">
-                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo}
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Aula Alighieri'}
                         </p>
                     </div>
                 </div>
@@ -399,14 +402,19 @@
 
         function renderClassiOrizzontaliPerOraCorrente() {
             const track = document.getElementById('classiTrackHorizontal');
+            const giornoCorrente = getGiornoCorrente();
             const oraCorrente = getOraScolasticaCorrente();
             
-            document.getElementById('activeHourBadge').textContent = `In corso: ${oraCorrente}`;
+            document.getElementById('activeHourBadge').textContent = `${giornoCorrente} - ${oraCorrente}`;
 
-            const classiAttive = classiData.filter(item => item.Ora.trim().toLowerCase() === oraCorrente.toLowerCase());
+            const classiAttive = classiData.filter(item => {
+                const matchGiorno = item.Giorno && item.Giorno.trim().toLowerCase() === giornoCorrente.toLowerCase();
+                const matchOra = item.Ora && item.Ora.trim().toLowerCase() === oraCorrente.toLowerCase();
+                return matchGiorno && matchOra;
+            });
 
             if (classiAttive.length === 0) {
-                track.innerHTML = `<div class="text-xs font-bold text-slate-500 px-4">Nessuna aula programmata per la ${oraCorrente}</div>`;
+                track.innerHTML = `<div class="text-xs font-bold text-slate-500 px-4">Nessuna aula programmata per ${giornoCorrente} (${oraCorrente})</div>`;
                 return;
             }
 
@@ -417,7 +425,7 @@
                     </span>
                     <div class="leading-tight">
                         <span class="block text-xs font-extrabold text-blue-950">${item.Aula}</span>
-                        <span class="block text-[10px] font-bold text-sky-700">${item.Ora}</span>
+                        <span class="block text-[10px] font-bold text-sky-700">${item.Nota || item.Ora}</span>
                     </div>
                 </div>
             `).join('');
