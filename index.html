@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Ingresso Scuola</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome per Icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+            background-color: #f0f7ff;
+        }
+
+        /* Container con maschera di trasparenza sfumata in alto/basso per un effetto ottico elegante */
+        .marquee-container {
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+        }
+
+        /* Animazione di scorrimento verticale continuo (Loop da alto verso basso) */
+        .marquee-track {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            animation: scrollDown 28s linear infinite;
+        }
+
+        .marquee-container:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(-50%);
+            }
+            100% {
+                transform: translateY(0%);
+            }
+        }
+
+        /* Ticker orizzontale ultim'ora */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .ticker {
+            display: inline-block;
+            animation: ticker 35s linear infinite;
+        }
+
+        .ticker-wrap:hover .ticker {
+            animation-play-state: paused;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        /* Personalizzazione Scrollbar Pannello Impostazioni */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        /* Effetti glassmorphism luminosi per schede chiare */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 25px -5px rgba(186, 214, 245, 0.4), 0 4px 10px -6px rgba(186, 214, 245, 0.2);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col text-slate-800 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
+
+    <!-- 1. HEADER (SUPERIORE) -->
+    <header class="h-24 px-6 bg-white/85 backdrop-blur-md border-b border-sky-100/80 flex items-center justify-between shadow-sm z-10 shrink-0">
+        <!-- Logo e Dati Scuola -->
+        <div class="flex items-center space-x-4">
+            <div id="logoContainer" class="w-16 h-16 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0">
+                <i class="fa-solid fa-graduation-cap text-3xl"></i>
+            </div>
+            <div>
+                <h1 id="schoolName" class="text-2xl font-extrabold text-slate-800 tracking-tight leading-none mb-1">
+                    Istituto Comprensivo "Gianni Rodari"
+                </h1>
+                <p id="schoolContacts" class="text-sm font-medium text-sky-700 flex items-center gap-3">
+                    <span><i class="fa-solid fa-location-dot text-sky-500 mr-1.5"></i>Via Garibaldi 12, Torino</span>
+                    <span><i class="fa-solid fa-phone text-sky-500 mr-1.5"></i>011 0001122</span>
+                    <span><i class="fa-solid fa-envelope text-sky-500 mr-1.5"></i>toic80000x@istruzione.it</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Ora e Data -->
+        <div class="flex items-center gap-4 bg-sky-100/60 border border-sky-200/60 rounded-2xl px-5 py-2">
+            <div class="text-right">
+                <div id="clock" class="text-3xl font-extrabold text-sky-950 font-mono tracking-tight leading-none mb-0.5">
+                    00:00:00
+                </div>
+                <div id="date" class="text-xs font-semibold text-sky-700 capitalize">
+                    Lunedì, 1 Gennaio 2026
+                </div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow-sm">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. PARTE CENTRALE (3 COLONNE: 4 - 4 - 4) -->
+    <main class="flex-1 grid grid-cols-12 gap-5 p-5 min-h-0">
+        
+        <!-- COLONNA 1: AVVISI & COMUNICAZIONI (Scorrimento verso il basso) -->
+        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-sky-100 shrink-0">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </span>
+                    <h2 class="text-lg font-bold text-slate-800">Avvisi & Comunicazioni</h2>
+                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-sky-100 text-sky-700 rounded-full">In evidenza</span>
+            </div>
+            
+            <div class="marquee-container flex-1">
+                <div id="avvisiTrack" class="marquee-track">
+                    <!-- Contenuto dinamico iniettato via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- COLONNA 2: FOTO SCUOLA (Rotazione automatica slider) -->
+        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-sky-100 shrink-0">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-images"></i>
+                    </span>
+                    <h2 class="text-lg font-bold text-slate-800">Vita Scolastica</h2>
+                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full">Galleria Foto</span>
+            </div>
+
+            <div class="relative flex-1 bg-sky-100/50 rounded-xl overflow-hidden shadow-inner group">
+                <div id="photoSlider" class="w-full h-full relative">
+                    <!-- Immagini rotanti gestite via JS -->
+                </div>
+                <!-- Didascalia Foto -->
+                <div class="absolute bottom-3 left-3 right-3 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/60 shadow-md">
+                    <p id="photoCaption" class="text-xs font-bold text-slate-700 truncate">Caricamento foto...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLONNA 3: PROSSIMI EVENTI & CALENDARIO (Scorrimento verso il basso) -->
+        <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-sky-100 shrink-0">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </span>
+                    <h2 class="text-lg font-bold text-slate-800">Prossimi Eventi</h2>
+                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full">Calendario</span>
+            </div>
+
+            <div class="marquee-container flex-1">
+                <div id="eventiTrack" class="marquee-track">
+                    <!-- Contenuto dinamico iniettato via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 3. PARTE INFERIORE (ORARI SEGRETERIA E TICKER NEWS) -->
+    <footer class="bg-white/90 backdrop-blur-md border-t border-sky-100 shrink-0 z-10 shadow-lg">
+        <!-- Fascia Orari Segreteria -->
+        <div class="grid grid-cols-2 gap-4 px-6 py-2.5 border-b border-sky-100/60 bg-sky-50/50">
+            <!-- Segreteria Famiglie -->
+            <div class="flex items-center space-x-3 bg-white/80 p-2 rounded-xl border border-sky-100">
+                <div class="w-9 h-9 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center text-base shrink-0">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-800 block">Segreteria Famiglie / Alunni</span>
+                    <span id="orarioFamiglie" class="text-xs font-medium text-slate-600 truncate block">Lun - Ven: 08:00 - 10:00 | Mar e Gio: 15:00 - 16:30</span>
+                </div>
+            </div>
+            
+            <!-- Segreteria Personale -->
+            <div class="flex items-center space-x-3 bg-white/80 p-2 rounded-xl border border-sky-100">
+                <div class="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-base shrink-0">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-800 block">Segreteria Personale / Docenti</span>
+                    <span id="orarioPersonale" class="text-xs font-medium text-slate-600 truncate block">Lun - Ven: 11:30 - 13:30 | Mer: 14:30 - 16:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticker Scorrevole Notizie dell'Ultim'ora -->
+        <div class="px-6 py-2 bg-sky-600 text-white flex items-center justify-between text-xs font-semibold relative">
+            <div class="flex items-center space-x-2 shrink-0 bg-sky-700 px-3 py-1 rounded-md z-10 shadow-sm mr-3">
+                <i class="fa-solid fa-bell animate-pulse text-amber-300"></i>
+                <span class="uppercase tracking-wider">Info Utili</span>
+            </div>
+            <div class="ticker-wrap flex-1">
+                <div id="tickerText" class="ticker">
+                    Benvenuti all'Istituto Comprensivo • Si ricorda di giustificare le assenze tramite Registro Elettronico • Iscrizioni ai laboratori pomeridiani aperte presso la Segreteria
+                </div>
+            </div>
+            <!-- Bottone Impostazioni Offline -->
+            <button onclick="toggleAdminPanel()" class="ml-3 p-1.5 hover:bg-sky-500 rounded-md transition-colors text-sky-100 hover:text-white shrink-0" title="Impostazioni Monitor">
+                <i class="fa-solid fa-gear text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 4. PANNELLO GESTIONE CONTENUTI (DRAWER AMMINISTRATORE) -->
+    <div id="adminPanel" class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl border-l border-slate-200 z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-4">
+            <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-sky-500"></i> Impostazioni Monitor
+            </h3>
+            <button onclick="toggleAdminPanel()" class="text-slate-400 hover:text-slate-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto space-y-5 pr-1">
+            <!-- Form Modifica Dati Scuola -->
+            <div>
+                <h4 class="text-xs font-bold text-sky-700 uppercase mb-2">Dati Istituto</h4>
+                <div class="space-y-2">
+                    <input type="text" id="editSchoolName" placeholder="Nome Scuola" class="w-full text-xs p-2 border rounded border-slate-300">
+                    <input type="text" id="editAddress" placeholder="Indirizzo" class="w-full text-xs p-2 border rounded border-slate-300">
+                    <input type="text" id="editPhone" placeholder="Telefono" class="w-full text-xs p-2 border rounded border-slate-300">
+                    <input type="text" id="editEmail" placeholder="Email" class="w-full text-xs p-2 border rounded border-slate-300">
+                </div>
+            </div>
+
+            <!-- Form Modifica Orari -->
+            <div>
+                <h4 class="text-xs font-bold text-sky-700 uppercase mb-2">Orari Segreteria</h4>
+                <div class="space-y-2">
+                    <input type="text" id="editOrarioFamiglie" placeholder="Orario Famiglie" class="w-full text-xs p-2 border rounded border-slate-300">
+                    <input type="text" id="editOrarioPersonale" placeholder="Orario Personale" class="w-full text-xs p-2 border rounded border-slate-300">
+                </div>
+            </div>
+
+            <!-- Gestione Ticker -->
+            <div>
+                <h4 class="text-xs font-bold text-sky-700 uppercase mb-2">Testo Ticker Scorrevole</h4>
+                <textarea id="editTicker" rows="2" class="w-full text-xs p-2 border rounded border-slate-300"></textarea>
+            </div>
+
+            <!-- Aggiunta Avviso -->
+            <div class="bg-sky-50/60 p-3 rounded-lg border border-sky-100">
+                <h4 class="text-xs font-bold text-sky-800 uppercase mb-2">+ Aggiungi Avviso</h4>
+                <input type="text" id="newAvvisoTitle" placeholder="Titolo Avviso" class="w-full text-xs p-2 border rounded border-slate-300 mb-2">
+                <textarea id="newAvvisoBody" placeholder="Testo del messaggio..." rows="2" class="w-full text-xs p-2 border rounded border-slate-300 mb-2"></textarea>
+                <select id="newAvvisoBadge" class="w-full text-xs p-2 border rounded border-slate-300 mb-2 bg-white">
+                    <option value="IMPORTANTE">IMPORTANTE</option>
+                    <option value="CIRC. N. 45">CIRC. N. 45</option>
+                    <option value="DOCENTI">DOCENTI</option>
+                    <option value="FAMIGLIE">FAMIGLIE</option>
+                </select>
+                <button onclick="addAvviso()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs py-2 rounded transition-colors">Aggiungi Avviso</button>
+            </div>
+
+            <!-- Aggiunta Evento -->
+            <div class="bg-indigo-50/60 p-3 rounded-lg border border-indigo-100">
+                <h4 class="text-xs font-bold text-indigo-800 uppercase mb-2">+ Aggiungi Evento</h4>
+                <input type="text" id="newEventDate" placeholder="Giorno / Ora (es. 15 NOV | 16:30)" class="w-full text-xs p-2 border rounded border-slate-300 mb-2">
+                <input type="text" id="newEventTitle" placeholder="Titolo Evento" class="w-full text-xs p-2 border rounded border-slate-300 mb-2">
+                <input type="text" id="newEventLoc" placeholder="Luogo (es. Aula Magna)" class="w-full text-xs p-2 border rounded border-slate-300 mb-2">
+                <button onclick="addEvent()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 rounded transition-colors">Aggiungi Evento</button>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 mt-auto">
+            <button onclick="saveAdminData()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded shadow transition-colors">Salva e Aggiorna Monitor</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT INTEGRATO -->
+    <script>
+        // DATI INIZIALI PREDEFINITI
+        let schoolData = {
+            name: 'Istituto Comprensivo "Gianni Rodari"',
+            address: 'Via Garibaldi 12, Torino',
+            phone: '011 0001122',
+            email: 'toic80000x@istruzione.it',
+            orarioFamiglie: 'Lun - Ven: 08:00 - 10:00 | Mar e Gio: 15:00 - 16:30',
+            orarioPersonale: 'Lun - Ven: 11:30 - 13:30 | Mer: 14:30 - 16:00',
+            ticker: 'Benvenuti all\'Istituto Comprensivo • Si ricorda di giustificare le assenze tramite Registro Elettronico • Iscrizioni ai laboratori pomeridiani aperte presso la Segreteria'
+        };
+
+        let avvisi = [
+            { badge: 'IMPORTANTE', title: 'Ricevimento Generale Genitori', text: 'Prenotazioni aperte sul Registro Elettronico a partire da lunedì prossimo.', date: 'Oggi, 10:30' },
+            { badge: 'CIRC. N. 45', title: 'Progetto "Officina Creativa"', text: 'Avvio dei laboratori pomeridiani di robotica e STEM per la scuola secondaria.', date: 'Ieri' },
+            { badge: 'DOCENTI', title: 'Convocazione Collegio Docenti', text: 'Il Collegio dei Docenti è convocato per giovedì alle ore 16:45 in Aula Magna.', date: '2 giorni fa' },
+            { badge: 'FAMIGLIE', title: 'Uscita Didattica al Parco', text: 'Consegna autorizzazioni firmate entro venerdì in segreteria.', date: '3 giorni fa' }
+        ];
+
+        let eventi = [
+            { day: '12 NOV', time: '16:30', title: 'Consiglio di Istituto', loc: 'Aula Riunioni Plesso King' },
+            { day: '17 NOV', time: '09:00', title: 'Elezioni Rappresentanti', loc: 'Tutti i plessi dell\'Istituto' },
+            { day: '25 NOV', time: '10:30', title: 'Incontro Civic Education', loc: 'Auditorium Comunale' },
+            { day: '02 DIC', time: '15:00', title: 'Open Day Scuole Aperte', loc: 'Plesso Main & Agazzi' }
+        ];
+
+        // Galleria Foto Scuola
+        const photos = [
+            {
+                caption: "Laboratorio Innovativo STEM e Robotica",
+                svgBg: "from-sky-400 to-blue-600",
+                icon: "fa-laptop-code"
+            },
+            {
+                caption: "Iniziative Sportive e Attività all'Aperto",
+                svgBg: "from-teal-400 to-emerald-600",
+                icon: "fa-volleyball"
+            },
+            {
+                caption: "Biblioteca Scolastica e Spazio Lettura",
+                svgBg: "from-amber-400 to-orange-500",
+                icon: "fa-book-open"
+            },
+            {
+                caption: "Laboratorio d'Arte e Creatività",
+                svgBg: "from-purple-400 to-indigo-600",
+                icon: "fa-palette"
+            }
+        ];
+
+        let currentPhotoIndex = 0;
+
+        // 1. Orologio e Data in Tempo Reale
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('it-IT', options);
+            document.getElementById('date').textContent = dateStr;
+        }
+
+        // 2. Renderizzatore Scorrimento Verticale per Avvisi ed Eventi (Loop Continuo)
+        function renderMarqueeList(containerId, items, renderCardFn) {
+            const track = document.getElementById(containerId);
+            const originalHTML = items.map(renderCardFn).join('');
+            track.innerHTML = originalHTML + originalHTML;
+        }
+
+        function renderAvvisoCard(item) {
+            return `
+                <div class="bg-white p-3.5 rounded-xl border border-sky-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-sky-100 text-sky-800 rounded-md uppercase tracking-wider">${item.badge}</span>
+                        <span class="text-[11px] font-medium text-slate-400">${item.date}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-800 mb-1 leading-snug">${item.title}</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.text}</p>
+                </div>
+            `;
+        }
+
+        function renderEventoCard(item) {
+            return `
+                <div class="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow flex items-start space-x-3">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-2 text-center shrink-0 w-16">
+                        <span class="block text-[11px] font-extrabold text-indigo-600 uppercase leading-none">${item.day}</span>
+                        <span class="block text-[10px] font-semibold text-indigo-400 mt-1">${item.time}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-bold text-slate-800 truncate mb-1">${item.title}</h3>
+                        <p class="text-xs text-slate-500 flex items-center truncate">
+                            <i class="fa-solid fa-location-dot text-indigo-400 mr-1 text-[10px]"></i> ${item.loc}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. Slider Foto con Transizione Fluida
+        function initPhotoSlider() {
+            const slider = document.getElementById('photoSlider');
+            slider.innerHTML = photos.map((photo, index) => `
+                <div class="photo-slide absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${photo.svgBg} transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                    <i class="fa-solid ${photo.icon} text-white/40 text-7xl mb-2 drop-shadow-md"></i>
+                    <span class="text-white/70 text-xs font-semibold uppercase tracking-widest">Spazio Scuola</span>
+                </div>
+            `).join('');
+            
+            updatePhotoCaption();
+            setInterval(nextPhoto, 5000);
+        }
+
+        function nextPhoto() {
+            const slides = document.querySelectorAll('.photo-slide');
+            slides[currentPhotoIndex].classList.remove('opacity-100');
+            slides[currentPhotoIndex].classList.add('opacity-0');
+
+            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+
+            slides[currentPhotoIndex].classList.remove('opacity-0');
+            slides[currentPhotoIndex].classList.add('opacity-100');
+
+            updatePhotoCaption();
+        }
+
+        function updatePhotoCaption() {
+            document.getElementById('photoCaption').textContent = photos[currentPhotoIndex].caption;
+        }
+
+        // 4. Aggiornamento UI
+        function refreshUI() {
+            document.getElementById('schoolName').textContent = schoolData.name;
+            document.getElementById('schoolContacts').innerHTML = `
+                <span><i class="fa-solid fa-location-dot text-sky-500 mr-1.5"></i>${schoolData.address}</span>
+                <span><i class="fa-solid fa-phone text-sky-500 mr-1.5"></i>${schoolData.phone}</span>
+                <span><i class="fa-solid fa-envelope text-sky-500 mr-1.5"></i>${schoolData.email}</span>
+            `;
+            document.getElementById('orarioFamiglie').textContent = schoolData.orarioFamiglie;
+            document.getElementById('orarioPersonale').textContent = schoolData.orarioPersonale;
+            
+            const tickerEl = document.getElementById('tickerText');
+            tickerEl.textContent = schoolData.ticker + " • " + schoolData.ticker;
+
+            renderMarqueeList('avvisiTrack', avvisi, renderAvvisoCard);
+            renderMarqueeList('eventiTrack', eventi, renderEventoCard);
+        }
+
+        // 5. Pannello Amministratore
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('translate-x-full');
+            
+            if (!panel.classList.contains('translate-x-full')) {
+                document.getElementById('editSchoolName').value = schoolData.name;
+                document.getElementById('editAddress').value = schoolData.address;
+                document.getElementById('editPhone').value = schoolData.phone;
+                document.getElementById('editEmail').value = schoolData.email;
+                document.getElementById('editOrarioFamiglie').value = schoolData.orarioFamiglie;
+                document.getElementById('editOrarioPersonale').value = schoolData.orarioPersonale;
+                document.getElementById('editTicker').value = schoolData.ticker;
+            }
+        }
+
+        function addAvviso() {
+            const title = document.getElementById('newAvvisoTitle').value;
+            const text = document.getElementById('newAvvisoBody').value;
+            const badge = document.getElementById('newAvvisoBadge').value;
+
+            if (title && text) {
+                avvisi.unshift({ badge, title, text, date: 'Ora' });
+                document.getElementById('newAvvisoTitle').value = '';
+                document.getElementById('newAvvisoBody').value = '';
+                refreshUI();
+            }
+        }
+
+        function addEvent() {
+            const dateStr = document.getElementById('newEventDate').value;
+            const title = document.getElementById('newEventTitle').value;
+            const loc = document.getElementById('newEventLoc').value;
+
+            if (dateStr && title) {
+                const parts = dateStr.split('|');
+                const day = parts[0] ? parts[0].trim() : 'PROSSIMAMENTE';
+                const time = parts[1] ? parts[1].trim() : '10:00';
+                
+                eventi.unshift({ day, time, title, loc: loc || 'Plesso Principale' });
+                document.getElementById('newEventDate').value = '';
+                document.getElementById('newEventTitle').value = '';
+                document.getElementById('newEventLoc').value = '';
+                refreshUI();
+            }
+        }
+
+        function saveAdminData() {
+            schoolData.name = document.getElementById('editSchoolName').value;
+            schoolData.address = document.getElementById('editAddress').value;
+            schoolData.phone = document.getElementById('editPhone').value;
+            schoolData.email = document.getElementById('editEmail').value;
+            schoolData.orarioFamiglie = document.getElementById('editOrarioFamiglie').value;
+            schoolData.orarioPersonale = document.getElementById('editOrarioPersonale').value;
+            schoolData.ticker = document.getElementById('editTicker').value;
+
+            refreshUI();
+            toggleAdminPanel();
+        }
+
+        // Inizializzazione Applicazione
+        document.addEventListener('DOMContentLoaded', () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+            initPhotoSlider();
+            refreshUI();
+        });
+    </script>
+</body>
+</html>
