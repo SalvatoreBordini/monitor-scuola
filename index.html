@@ -152,22 +152,22 @@
         </section>
     </main>
 
-    <!-- FASCIA ORIZZONTALE IN BASSO: DISLOCAZIONE AULE CLASSI ORA PER ORA -->
+    <!-- FASCIA ORIZZONTALE IN BASSO: AULE CLASSI FILTRATE PER ORA CORRENTE -->
     <section class="px-5 py-2 shrink-0">
         <div class="glass-card rounded-2xl p-3 flex items-center space-x-4 overflow-hidden border-2 border-sky-300 shadow-md">
-            <!-- Badge Titolo della Fascia -->
-            <div class="flex items-center space-x-2 bg-sky-900 text-white px-3 py-2 rounded-xl shrink-0 shadow">
+            <!-- Badge Titolo con indicazione dell'ora attiva -->
+            <div class="flex items-center space-x-2.5 bg-sky-900 text-white px-3.5 py-2 rounded-xl shrink-0 shadow">
                 <i class="fa-solid fa-door-open text-sky-300 text-lg"></i>
                 <div class="leading-none">
                     <span class="block text-xs font-black uppercase tracking-wider text-white">Aule Classi</span>
-                    <span class="block text-[10px] font-extrabold text-sky-200">Ora per Ora</span>
+                    <span id="activeHourBadge" class="block text-[10px] font-extrabold text-sky-200 mt-0.5">In corso...</span>
                 </div>
             </div>
 
-            <!-- Nastro Scorrevole Orizzontale delle Classi -->
+            <!-- Nastro Scorrevole Orizzontale delle Classi Filtrate -->
             <div class="horizontal-marquee-wrap flex-1">
                 <div id="classiTrackHorizontal" class="horizontal-marquee items-center">
-                    <!-- I badge delle classi verranno inseriti qui da JavaScript -->
+                    <!-- Inserito dinamicamente via JS -->
                 </div>
             </div>
         </div>
@@ -216,26 +216,33 @@
     <script>
         const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
         const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
-        const GOOGLE_SHEET_CLASSI_URL = ''; // Opzionale: inserisci l'URL del foglio CSV per le classi se desideri gestirlo da Google Sheets
+        const GOOGLE_SHEET_CLASSI_URL = ''; // Opzionale: inserisci l'URL del foglio CSV per le aule
 
         let avvisiData = [];
         let eventiData = [];
 
-        // Dati di esempio per l'orario aule delle classi
+        // Dati di esempio per l'orario aule delle classi suddivise per ora
         let classiData = [
-            { Classe: '1ª A', Ora: '1ª Ora', Aula: 'Aula 101' },
-            { Classe: '1ª B', Ora: '1ª Ora', Aula: 'Aula 102' },
-            { Classe: '2ª A', Ora: '1ª Ora', Aula: 'Lab. Multimediale' },
-            { Classe: '2ª B', Ora: '1ª Ora', Aula: 'Aula 104' },
-            { Classe: '3ª A', Ora: '1ª Ora', Aula: 'Aula Magna' },
-            { Classe: '3ª B', Ora: '1ª Ora', Aula: 'Palestra Plesso King' },
+            { Classe: '1ª A', Ora: '1° Ora', Aula: 'Aula 101' },
+            { Classe: '1ª B', Ora: '1° Ora', Aula: 'Aula 102' },
+            { Classe: '2ª A', Ora: '1° Ora', Aula: 'Lab. Multimediale' },
+            { Classe: '2ª B', Ora: '1° Ora', Aula: 'Aula 104' },
+            { Classe: '3ª A', Ora: '1° Ora', Aula: 'Aula Magna' },
+            { Classe: '3ª B', Ora: '1° Ora', Aula: 'Palestra King' },
             
-            { Classe: '1ª A', Ora: '2ª Ora', Aula: 'Lab. Scienze' },
-            { Classe: '1ª B', Ora: '2ª Ora', Aula: 'Aula 102' },
-            { Classe: '2ª A', Ora: '2ª Ora', Aula: 'Aula 103' },
-            { Classe: '2ª B', Ora: '2ª Ora', Aula: 'Palestra' },
-            { Classe: '3ª A', Ora: '2ª Ora', Aula: 'Aula 105' },
-            { Classe: '3ª B', Ora: '2ª Ora', Aula: 'Aula 106' }
+            { Classe: '1ª A', Ora: '2° Ora', Aula: 'Lab. Scienze' },
+            { Classe: '1ª B', Ora: '2° Ora', Aula: 'Aula 102' },
+            { Classe: '2ª A', Ora: '2° Ora', Aula: 'Aula 103' },
+            { Classe: '2ª B', Ora: '2° Ora', Aula: 'Palestra' },
+            { Classe: '3ª A', Ora: '2° Ora', Aula: 'Aula 105' },
+            { Classe: '3ª B', Ora: '2° Ora', Aula: 'Aula 106' },
+
+            { Classe: '1ª A', Ora: '3° Ora', Aula: 'Aula 101' },
+            { Classe: '1ª B', Ora: '3° Ora', Aula: 'Lab. Informatica' },
+            { Classe: '2ª A', Ora: '3° Ora', Aula: 'Aula 103' },
+            { Classe: '2ª B', Ora: '3° Ora', Aula: 'Aula 104' },
+            { Classe: '3ª A', Ora: '3° Ora', Aula: 'Aula 105' },
+            { Classe: '3ª B', Ora: '3° Ora', Aula: 'Aula 106' }
         ];
 
         const photos = [
@@ -251,6 +258,32 @@
             const now = new Date();
             document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
             document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Aggiorna il filtro delle classi ogni volta che l'orologio batte il secondo (utile per il cambio ora)
+            renderClassiOrizzontaliPerOraCorrente();
+        }
+
+        // Funzione per determinare l'ora scolastica in base all'orario corrente del sistema
+        function getOraScolasticaCorrente() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const timeInMinutes = hours * 60 + minutes;
+
+            // Esempio di fasce orarie scolastiche standard (personalizzabili):
+            // Dalle 08:00 alle 09:00 -> 1° Ora
+            // Dalle 09:00 alle 10:00 -> 2° Ora
+            // Dalle 10:00 alle 11:00 -> 3° Ora
+            // Dalle 11:00 alle 12:00 -> 4° Ora
+            // Dalle 12:00 in poi -> 5° Ora (o di default la 1° se fuori orario per test)
+
+            if (timeInMinutes >= 480 && timeInMinutes < 540) return '1° Ora';
+            if (timeInMinutes >= 540 && timeInMinutes < 600) return '2° Ora';
+            if (timeInMinutes >= 600 && timeInMinutes < 660) return '3° Ora';
+            if (timeInMinutes >= 660 && timeInMinutes < 720) return '4° Ora';
+            if (timeInMinutes >= 720) return '5° Ora';
+            
+            return '1° Ora'; // Default per le ore pomeridiane o prima dell'apertura
         }
 
         function fetchGoogleSheetsData() {
@@ -289,12 +322,10 @@
                     complete: function(results) {
                         if(results.data && results.data.length > 0) {
                             classiData = results.data.filter(item => item.Classe);
-                            renderClassiOrizzontali();
+                            renderClassiOrizzontaliPerOraCorrente();
                         }
                     }
                 });
-            } else {
-                renderClassiOrizzontali();
             }
         }
 
@@ -317,14 +348,10 @@
 
             const html = avvisiValidi.map(item => {
                 const isEvidenza = item.InEvidenza && item.InEvidenza.toUpperCase() === 'SI';
-                
                 const cardStyle = isEvidenza 
                     ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
                     : 'bg-white border-2 border-blue-100 shadow-md';
-                    
-                const badgeStyle = isEvidenza
-                    ? 'bg-amber-600 text-white animate-pulse'
-                    : 'bg-blue-900 text-white';
+                const badgeStyle = isEvidenza ? 'bg-amber-600 text-white animate-pulse' : 'bg-blue-900 text-white';
 
                 return `
                     <div class="${cardStyle} p-4 rounded-xl transition-all">
@@ -343,17 +370,24 @@
             track.innerHTML = html + html;
         }
 
-        function renderClassiOrizzontali() {
+        function renderClassiOrizzontaliPerOraCorrente() {
             const track = document.getElementById('classiTrackHorizontal');
+            const oraCorrente = getOraScolasticaCorrente();
             
-            if (classiData.length === 0) {
-                track.innerHTML = `<div class="text-xs font-bold text-slate-500">Nessuna aula registrata</div>`;
+            // Aggiorna l'etichetta del badge con l'ora attualmente filtrata sullo schermo
+            document.getElementById('activeHourBadge').textContent = `In corso: ${oraCorrente}`;
+
+            // FILTRA LE CLASSI MANTENENDO SOLO QUELLE DELL'ORA CORRENTE
+            const classiAttive = classiData.filter(item => item.Ora.trim().toLowerCase() === oraCorrente.toLowerCase());
+
+            if (classiAttive.length === 0) {
+                track.innerHTML = `<div class="text-xs font-bold text-slate-500 px-4">Nessuna aula programmata per la ${oraCorrente}</div>`;
                 return;
             }
 
-            const html = classiData.map(item => `
-                <div class="bg-white px-3.5 py-1.5 rounded-xl border-2 border-sky-200 shadow-sm flex items-center space-x-2.5 shrink-0">
-                    <span class="w-7 h-7 bg-blue-900 text-white rounded-lg flex items-center justify-center font-black text-xs shadow-sm">
+            const html = classiAttive.map(item => `
+                <div class="bg-white px-4 py-2 rounded-xl border-2 border-sky-200 shadow-sm flex items-center space-x-3 shrink-0">
+                    <span class="w-8 h-8 bg-blue-900 text-white rounded-lg flex items-center justify-center font-black text-xs shadow-sm">
                         ${item.Classe}
                     </span>
                     <div class="leading-tight">
@@ -363,7 +397,7 @@
                 </div>
             `).join('');
 
-            // Duplicazione per scorrimento orizzontale infinito e continuo
+            // Duplicazione per scorrimento orizzontale fluido e continuo
             track.innerHTML = html + html;
         }
 
@@ -373,73 +407,3 @@
             today.setHours(0, 0, 0, 0);
 
             const eventiValidi = eventiData.filter(item => {
-                const dateToCheck = item.Scadenza || item.Data;
-                if (!dateToCheck) return true;
-                const d = new Date(dateToCheck);
-                return isNaN(d.getTime()) || d >= today;
-            });
-
-            if (eventiValidi.length === 0) {
-                track.innerHTML = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento in programma.</div>`;
-                return;
-            }
-
-            const html = eventiValidi.map(item => `
-                <div class="bg-white p-4 rounded-xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
-                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-2.5 text-center shrink-0 w-20">
-                        <span class="block text-xs font-black text-indigo-900 uppercase leading-none">${item.Giorno}</span>
-                        <span class="block text-xs font-bold text-indigo-600 mt-1">${item.Ora}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-base font-extrabold text-indigo-950 truncate mb-1">${item.Titolo}</h3>
-                        <p class="text-xs font-bold text-slate-500 flex items-center truncate">
-                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo}
-                        </p>
-                    </div>
-                </div>
-            `).join('');
-            track.innerHTML = html + html;
-        }
-
-        function initPhotoSlider() {
-            const slider = document.getElementById('photoSlider');
-            slider.innerHTML = photos.map((photo, index) => `
-                <div class="photo-slide absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${photo.svgBg} transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
-                    <i class="fa-solid ${photo.icon} text-white/50 text-8xl mb-3 drop-shadow-lg"></i>
-                    <span class="text-white/80 text-xs font-bold uppercase tracking-widest">Spazio Scuola</span>
-                </div>
-            `).join('');
-            
-            updatePhotoCaption();
-            setInterval(nextPhoto, 6000);
-        }
-
-        function nextPhoto() {
-            const slides = document.querySelectorAll('.photo-slide');
-            if(slides.length === 0) return;
-            slides[currentPhotoIndex].classList.remove('opacity-100');
-            slides[currentPhotoIndex].classList.add('opacity-0');
-
-            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
-
-            slides[currentPhotoIndex].classList.remove('opacity-0');
-            slides[currentPhotoIndex].classList.add('opacity-100');
-
-            updatePhotoCaption();
-        }
-
-        function updatePhotoCaption() {
-            document.getElementById('photoCaption').textContent = photos[currentPhotoIndex].caption;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateClock();
-            setInterval(updateClock, 1000);
-            initPhotoSlider();
-            fetchGoogleSheetsData();
-
-            setInterval(fetchGoogleSheetsData, 120000);
-        });
-    </script>
-</body>
-</html>
