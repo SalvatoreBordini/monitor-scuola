@@ -15,7 +15,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; background-color: #f0f7ff; }
 
-        /* Container con maschera di trasparenza sfumata in alto/basso */
         .marquee-container {
             position: relative;
             overflow: hidden;
@@ -28,7 +27,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            animation: scrollDown 45s linear infinite; /* Rallentato per una lettura distesa a distanza */
+            animation: scrollDown 45s linear infinite;
         }
 
         .marquee-container:hover .marquee-track { animation-play-state: paused; }
@@ -57,19 +56,20 @@
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col text-slate-900 bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100">
 
-    <!-- HEADER SUPERIORE CON DETTAGLI BLU INTENSO -->
+    <!-- HEADER SUPERIORE CON DETTAGLI BLU INTENSO E EMAIL DELL'ISTITUTO -->
     <header class="h-24 px-6 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-lg z-10 shrink-0 border-b border-blue-900">
         <div class="flex items-center space-x-4">
             <div class="w-16 h-16 bg-gradient-to-tr from-sky-500 to-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0">
                 <i class="fa-solid fa-graduation-cap text-3xl"></i>
             </div>
             <div>
-                <h1 id="schoolName" class="text-2xl font-black text-white tracking-tight leading-none mb-1">
+                <h1 id="schoolName" class="text-2xl font-black text-white tracking-tight leading-none mb-1.5">
                     Istituto Comprensivo "Gianni Rodari"
                 </h1>
-                <p id="schoolContacts" class="text-sm font-bold text-sky-300 flex items-center gap-4">
+                <p id="schoolContacts" class="text-xs font-bold text-sky-300 flex items-center gap-4">
                     <span><i class="fa-solid fa-location-dot text-sky-400 mr-1.5"></i>Via Garibaldi 12, Torino</span>
                     <span><i class="fa-solid fa-phone text-sky-400 mr-1.5"></i>011 0001122</span>
+                    <span><i class="fa-solid fa-envelope text-sky-400 mr-1.5"></i>toic80000x@istruzione.it</span>
                 </p>
             </div>
         </div>
@@ -171,7 +171,7 @@
             </div>
             <div class="ticker-wrap flex-1">
                 <div id="tickerText" class="ticker text-sm font-semibold text-sky-100">
-                    Benvenuti all'Istituto Comprensivo 
+                    Benvenuti all'Istituto Comprensivo • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico •
                 </div>
             </div>
             <div id="syncBadge" class="ml-3 text-[11px] bg-blue-900 px-2.5 py-1 rounded-lg text-sky-200 shrink-0 font-bold border border-blue-800">
@@ -182,9 +182,8 @@
 
     <!-- SCRIPT LOGICA E GOOGLE SHEETS -->
     <script>
-        // URL dei Google Fogli CSV creati nel tuo Google Drive
-        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTglKka0W4NipKw8Gb89EXawHFM-xrP1nCx-kErAQdCXqAz3ZXEPDa35ZV5Nk_W3LhT-8D0JWmfLvwh/pub?output=csv';
-        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
+        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/1lf-A6lKplvyiT_nJzBzvnMvIyY3F9luPjB5KAiUc5ME/export?format=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/1K9yb89H2SB1LVWboXaxS1T3MxIBZ46ztGjlxiGjXX0E/export?format=csv';
 
         let avvisiData = [];
         let eventiData = [];
@@ -239,7 +238,6 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Filtra mantenendo solo gli avvisi con data odierna o futura (se la colonna Data è compilata nel formato AAAA-MM-GG)
             const avvisiValidi = avvisiData.filter(item => {
                 if (!item.Data) return true;
                 const d = new Date(item.Data);
@@ -269,7 +267,6 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Filtra mantenendo solo gli eventi futuri o odierni
             const eventiValidi = eventiData.filter(item => {
                 if (!item.Data) return true;
                 const d = new Date(item.Data);
