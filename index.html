@@ -126,7 +126,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 2: FOTO SCUOLA (SLIDER) -->
+        <!-- COLONNA 2: FOTO SCUOLA (SLIDER ADATTATO ALLA COLONNA) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -138,9 +138,10 @@
                 <span class="text-xs font-extrabold px-3 py-1 bg-blue-100 text-blue-900 rounded-full border border-blue-200">Galleria</span>
             </div>
 
-            <div class="relative flex-1 bg-sky-100/60 rounded-xl overflow-hidden shadow-inner">
+            <!-- Contenitore Immagine Adattato -->
+            <div class="relative flex-1 bg-slate-900 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
                 <div id="photoSlider" class="w-full h-full relative"></div>
-                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-blue-200 shadow-lg">
+                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-blue-200 shadow-lg z-10">
                     <p id="photoCaption" class="text-xs font-extrabold text-blue-950 truncate">Caricamento foto...</p>
                 </div>
             </div>
@@ -235,33 +236,23 @@
         let currentPhotoIndex = 0;
         let photoInterval = null;
 
-        // Funzione per convertire stringhe di data (GG/MM/AAAA o AAAA-MM-GG) in oggetto Date
         function parseDate(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.trim();
-            
-            // Formato italiano GG/MM/AAAA o GG-MM-AAAA
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
-                if (parts.length === 3) {
-                    return new Date(parts[2], parts[1] - 1, parts[0]);
-                }
+                if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]);
             } else if (dateStr.includes('-')) {
                 const parts = dateStr.split('-');
                 if (parts.length === 3) {
-                    // Se la prima parte è di 4 cifre è AAAA-MM-GG
-                    if (parts[0].length === 4) {
-                        return new Date(parts[0], parts[1] - 1, parts[2]);
-                    } else { // Altrimenti GG-MM-AAAA
-                        return new Date(parts[2], parts[1] - 1, parts[0]);
-                    }
+                    if (parts[0].length === 4) return new Date(parts[0], parts[1] - 1, parts[2]);
+                    else return new Date(parts[2], parts[1] - 1, parts[0]);
                 }
             }
             const d = new Date(dateStr);
             return isNaN(d.getTime()) ? null : d;
         }
 
-        // Funzione per convertire link Google Drive in URL diretti d'immagine
         function convertDriveUrl(url) {
             if (!url) return '';
             url = url.trim();
@@ -461,7 +452,7 @@
 
             const eventiValidi = eventiData.filter(item => {
                 const dateToCheck = item.Data || item.Scadenza;
-                if (!dateToCheck) return true; // Mostra comunque se non è specificata una data
+                if (!dateToCheck) return true;
                 
                 const d = parseDate(dateToCheck);
                 if (!d) return true;
@@ -529,6 +520,7 @@
             track.innerHTML = html + html;
         }
 
+        // SLIDER FOTO PERFETTAMENTE ADATTATO ALLA COLONNA
         function initPhotoSlider() {
             const slider = document.getElementById('photoSlider');
             if (photosData.length === 0) {
