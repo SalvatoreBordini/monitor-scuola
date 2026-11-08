@@ -233,6 +233,46 @@
         let classiData = [];
         let photosData = [];
         let currentPhotoIndex = 0;
+        let photoInterval = null;
+
+        // Funzione per convertire stringhe di data (GG/MM/AAAA o AAAA-MM-GG) in oggetto Date
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            dateStr = dateStr.trim();
+            
+            // Formato italiano GG/MM/AAAA o GG-MM-AAAA
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    return new Date(parts[2], parts[1] - 1, parts[0]);
+                }
+            } else if (dateStr.includes('-')) {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    // Se la prima parte è di 4 cifre è AAAA-MM-GG
+                    if (parts[0].length === 4) {
+                        return new Date(parts[0], parts[1] - 1, parts[2]);
+                    } else { // Altrimenti GG-MM-AAAA
+                        return new Date(parts[2], parts[1] - 1, parts[0]);
+                    }
+                }
+            }
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        // Funzione per convertire link Google Drive in URL diretti d'immagine
+        function convertDriveUrl(url) {
+            if (!url) return '';
+            url = url.trim();
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+            return url;
+        }
 
         function initSchoolLogo() {
             const headerContainer = document.getElementById('headerLogoContainer');
@@ -292,6 +332,7 @@
             Papa.parse(GOOGLE_SHEET_AVVISI_URL, {
                 download: true,
                 header: true,
+                skipEmptyLines: true,
                 complete: function(results) {
                     if(results.data && results.data.length > 0) {
                         avvisiData = results.data.filter(item => item.Titolo);
@@ -303,6 +344,7 @@
             Papa.parse(GOOGLE_SHEET_EVENTI_URL, {
                 download: true,
                 header: true,
+                skipEmptyLines: true,
                 complete: function(results) {
                     if(results.data && results.data.length > 0) {
                         eventiData = results.data.filter(item => item.Titolo);
@@ -319,6 +361,7 @@
                 Papa.parse(GOOGLE_SHEET_CLASSI_URL, {
                     download: true,
                     header: true,
+                    skipEmptyLines: true,
                     complete: function(results) {
                         if(results.data && results.data.length > 0) {
                             classiData = results.data.filter(item => item.Classe);
@@ -332,9 +375,10 @@
                 Papa.parse(GOOGLE_SHEET_FOTO_URL, {
                     download: true,
                     header: true,
+                    skipEmptyLines: true,
                     complete: function(results) {
                         if(results.data && results.data.length > 0) {
-                            photosData = results.data.filter(item => item.URLImmagine);
+                            photosData = results.data.filter(item => item.URLImmagine && item.URLImmagine.trim() !== '');
                             initPhotoSlider();
                         }
                     }
@@ -372,8 +416,8 @@
             const avvisiValidi = avvisiData.filter(item => {
                 const dateToCheck = item.Scadenza || item.Data;
                 if (!dateToCheck) return true;
-                const d = new Date(dateToCheck);
-                return isNaN(d.getTime()) || d >= today;
+                const d = parseDate(dateToCheck);
+                return !d || d >= today;
             });
 
             if (avvisiValidi.length === 0) {
@@ -398,7 +442,7 @@
                             <span class="text-xs font-bold text-slate-400">${item.Data || ''}</span>
                         </div>
                         <h3 class="text-base font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1 leading-snug">${item.Titolo}</h3>
-                        <p class="text-sm font-medium text-slate-700 leading-relaxed">${item.Testo}</p>
+                        <p class="text-sm font-medium text-slate-700 leading-relaxed">${item.Testo || ''}</p>
                     </div>
                 `;
             }).join('');
@@ -416,11 +460,11 @@
             limitDate.setHours(23, 59, 59, 999);
 
             const eventiValidi = eventiData.filter(item => {
-                const dateToCheck = item.Scadenza || item.Data;
-                if (!dateToCheck) return false;
+                const dateToCheck = item.Data || item.Scadenza;
+                if (!dateToCheck) return true; // Mostra comunque se non è specificata una data
                 
-                const d = new Date(dateToCheck);
-                if (isNaN(d.getTime())) return false;
+                const d = parseDate(dateToCheck);
+                if (!d) return true;
 
                 return d >= today && d <= limitDate;
             });
@@ -434,7 +478,7 @@
             track.dataset.singleHtml = eventiValidi.map(item => `
                 <div class="bg-white p-4 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
                     <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-xl px-3 py-2 text-center text-white shrink-0 min-w-[5.5rem] shadow-sm">
-                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data}</span>
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data || ''}</span>
                         <span class="block text-sm font-extrabold text-white font-mono mt-0.5">${item.Ora || ''}</span>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -492,14 +536,20 @@
                 return;
             }
 
-            slider.innerHTML = photosData.map((photo, index) => `
-                <div class="photo-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}" 
-                     style="background-image: url('${photo.URLImmagine}')">
-                </div>
-            `).join('');
+            currentPhotoIndex = 0;
+            slider.innerHTML = photosData.map((photo, index) => {
+                const imgUrl = convertDriveUrl(photo.URLImmagine);
+                return `
+                    <div class="photo-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}" 
+                         style="background-image: url('${imgUrl}')">
+                    </div>
+                `;
+            }).join('');
             
             updatePhotoCaption();
-            setInterval(nextPhoto, 6000);
+
+            if (photoInterval) clearInterval(photoInterval);
+            photoInterval = setInterval(nextPhoto, 6000);
         }
 
         function nextPhoto() {
@@ -520,7 +570,7 @@
 
         function updatePhotoCaption() {
             if(photosData[currentPhotoIndex]) {
-                document.getElementById('photoCaption').textContent = photosData[currentPhotoIndex].Titolo;
+                document.getElementById('photoCaption').textContent = photosData[currentPhotoIndex].Titolo || '';
             }
         }
 
