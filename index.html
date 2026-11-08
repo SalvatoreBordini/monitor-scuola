@@ -126,7 +126,7 @@
             </div>
         </section>
 
-        <!-- COLONNA 2: FOTO SCUOLA (SLIDER ADATTATO ALLA COLONNA) -->
+        <!-- COLONNA 2: FOTO SCUOLA (SLIDER PERFETTAMENTE CONTENUTO) -->
         <section class="col-span-4 glass-card rounded-2xl p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center justify-between pb-3 mb-2 border-b-2 border-blue-900 shrink-0">
                 <div class="flex items-center space-x-2.5">
@@ -138,10 +138,10 @@
                 <span class="text-xs font-extrabold px-3 py-1 bg-blue-100 text-blue-900 rounded-full border border-blue-200">Galleria</span>
             </div>
 
-            <!-- Contenitore Immagine Adattato -->
-            <div class="relative flex-1 bg-slate-900 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
-                <div id="photoSlider" class="w-full h-full relative"></div>
-                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-blue-200 shadow-lg z-10">
+            <!-- Contenitore Immagine con Tag <img> e object-contain per non tagliare nulla -->
+            <div class="relative flex-1 bg-slate-900/90 rounded-xl overflow-hidden shadow-inner flex items-center justify-center p-2">
+                <div id="photoSlider" class="w-full h-full relative flex items-center justify-center"></div>
+                <div class="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-blue-200 shadow-lg z-20">
                     <p id="photoCaption" class="text-xs font-extrabold text-blue-950 truncate">Caricamento foto...</p>
                 </div>
             </div>
@@ -520,7 +520,7 @@
             track.innerHTML = html + html;
         }
 
-        // SLIDER FOTO PERFETTAMENTE ADATTATO ALLA COLONNA
+        // SLIDER FOTO CON TAG IMG E OBJECT-CONTAIN PER NON TAGLIARE MAI NESSUNA PARTE DELL'IMMAGINE
         function initPhotoSlider() {
             const slider = document.getElementById('photoSlider');
             if (photosData.length === 0) {
@@ -532,8 +532,8 @@
             slider.innerHTML = photosData.map((photo, index) => {
                 const imgUrl = convertDriveUrl(photo.URLImmagine);
                 return `
-                    <div class="photo-slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}" 
-                         style="background-image: url('${imgUrl}')">
+                    <div class="photo-slide absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                        <img src="${imgUrl}" alt="${photo.Titolo || 'Foto Scuola'}" class="max-w-full max-h-full object-contain drop-shadow-md">
                     </div>
                 `;
             }).join('');
