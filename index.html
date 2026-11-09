@@ -305,17 +305,30 @@
         }
 
         function getOraScolasticaCorrente() {
-            const now = new Date();
-            const timeInMinutes = now.getHours() * 60 + now.getMinutes();
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const timeInMinutes = hours * 60 + minutes;
 
-            if (timeInMinutes >= 480 && timeInMinutes < 540) return '1° Ora';
-            if (timeInMinutes >= 540 && timeInMinutes < 600) return '2° Ora';
-            if (timeInMinutes >= 600 && timeInMinutes < 660) return '3° Ora';
-            if (timeInMinutes >= 660 && timeInMinutes < 720) return '4° Ora';
-            if (timeInMinutes >= 720) return '5° Ora';
-            
-            return '1° Ora';
-        }
+    // 08:00 - 09:00 -> 480 a 540 min
+    if (timeInMinutes >= 480 && timeInMinutes < 540) return '1° Ora';
+    // 09:00 - 10:00 -> 540 a 600 min
+    if (timeInMinutes >= 540 && timeInMinutes < 600) return '2° Ora';
+    // 10:00 - 11:00 -> 600 a 660 min
+    if (timeInMinutes >= 600 && timeInMinutes < 660) return '3° Ora';
+    // 11:00 - 11:15 -> 660 a 675 min (Intervallo)
+    if (timeInMinutes >= 660 && timeInMinutes < 675) return 'Intervallo';
+    // 11:15 - 12:10 -> 675 a 730 min
+    if (timeInMinutes >= 675 && timeInMinutes < 730) return '4° Ora';
+    // 12:10 - 13:05 -> 730 a 785 min
+    if (timeInMinutes >= 730 && timeInMinutes < 785) return '5° Ora';
+    // 13:05 - 14:00 -> 785 a 840 min
+    if (timeInMinutes >= 785 && timeInMinutes < 840) return '6° Ora';
+    
+    // Fuori orario scolastico
+    return 'Fuori Orario';
+}
+        
 
         function fetchGoogleSheetsData() {
             const badgeEl = document.getElementById('syncBadge');
