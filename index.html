@@ -296,10 +296,9 @@
                     Benvenuti all'Istituto Comprensivo "King Mila" • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico • Plessi: M. Mila (Via Germonio, 12), Rosa Agazzi (Via Chambery, 33), M. L. King (Via Thures, 11), Carolina Agazzi (Via Postumia, 28) •
                 </div>
             </div>
-            <button type="button" id="syncBadge" onclick="fetchGoogleSheetsData()" title="Tocca per sincronizzare ora"
-                    class="touch-btn ml-4 text-xs bg-blue-900 hover:bg-blue-800 px-3 py-1.5 rounded-xl text-sky-200 shrink-0 font-bold border border-blue-800">
+            <div id="syncBadge" class="ml-4 text-xs bg-blue-900 px-3 py-1.5 rounded-xl text-sky-200 shrink-0 font-bold border border-blue-800">
                 <i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync Cloud
-            </button>
+            </div>
         </div>
     </footer>
 
@@ -320,20 +319,6 @@
         let idleModalTimeout = null;
         let lastDateString = '';
         let resizeTimeout = null;
-
-        function getField(row, ...candidateNames) {
-            if (!row || typeof row !== 'object') return '';
-            const keys = Object.keys(row);
-            for (const target of candidateNames) {
-                const normalizedTarget = target.trim().toLowerCase();
-                for (const key of keys) {
-                    if (key.trim().toLowerCase() === normalizedTarget) {
-                        return (row[key] ?? '').toString().trim();
-                    }
-                }
-            }
-            return '';
-        }
 
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -372,6 +357,12 @@
                 }
             }, { passive: true });
         });
+
+        function withCacheBuster(url) {
+            if (!url) return '';
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}t=${Date.now()}`;
+        }
 
         function parseDate(dateStr) {
             if (!dateStr) return null;
@@ -443,82 +434,94 @@
             document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        function updateSyncStatus(okCount, totalCount) {
+        function updateSyncStatus(isOk) {
             const badgeEl = document.getElementById('syncBadge');
             const timeLabel = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-            if (okCount === totalCount) {
+            if (isOk) {
                 badgeEl.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1 text-emerald-300"></i> Sync ${timeLabel}`;
-            } else if (okCount > 0) {
-                badgeEl.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1 text-amber-300"></i> Parziale ${timeLabel}`;
             } else {
-                badgeEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-rose-300"></i> Errore Sync`;
+                badgeEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Offline ${timeLabel}`;
             }
-        }
-
-        async function loadCsvFromSheet(url) {
-            const response = await fetch(url, { cache: 'no-store' });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const csvText = await response.text();
-            return new Promise((resolve, reject) => {
-                Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: (res) => resolve(res.data || []),
-                    error: (err) => reject(err)
-                });
-            });
         }
 
         function normalizePhotos(list) {
             return list
+                .filter(item => item.URLImmagine && item.URLImmagine.trim() !== '')
                 .map(item => ({
-                    URLImmagine: getField(item, 'URLImmagine', 'UrlImmagine', 'URL', 'Url', 'Immagine', 'Link'),
-                    Titolo: getField(item, 'Titolo', 'Didascalia', 'Descrizione', 'Nome')
-                }))
-                .filter(item => item.URLImmagine !== '');
+                    URLImmagine: item.URLImmagine.trim(),
+                    Titolo: (item.Titolo || '').trim()
+                }));
         }
 
-        async function fetchGoogleSheetsData() {
+        function fetchGoogleSheetsData() {
             const badgeEl = document.getElementById('syncBadge');
             badgeEl.innerHTML = '<i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync...';
 
-            let okCount = 0;
+            let completedFeeds = 0;
+            let hasError = false;
 
-            try {
-                const rawAvvisi = await loadCsvFromSheet(GOOGLE_SHEET_AVVISI_URL);
-                avvisiData = rawAvvisi.filter(item => getField(item, 'Titolo', 'Testo') !== '');
-                renderAvvisi();
-                okCount++;
-            } catch (e) {
-                console.error('Errore sync avvisi:', e);
-            }
-
-            try {
-                const rawEventi = await loadCsvFromSheet(GOOGLE_SHEET_EVENTI_URL);
-                eventiData = rawEventi.filter(item => getField(item, 'Titolo', 'Evento') !== '');
-                renderEventi();
-                okCount++;
-            } catch (e) {
-                console.error('Errore sync eventi:', e);
-            }
-
-            try {
-                const rawFoto = await loadCsvFromSheet(GOOGLE_SHEET_FOTO_URL);
-                const newPhotos = normalizePhotos(rawFoto);
-                if (JSON.stringify(newPhotos) !== JSON.stringify(photosData)) {
-                    photosData = newPhotos;
-                    initPhotoSlider();
-                } else if (!photoInterval && photosData.length > 1) {
-                    startAutoPhotoSlider();
+            function checkAllDone() {
+                completedFeeds++;
+                if (completedFeeds >= 3) {
+                    updateSyncStatus(!hasError);
                 }
-                okCount++;
-            } catch (e) {
-                console.error('Errore sync foto:', e);
             }
+            
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_AVVISI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        avvisiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderAvvisi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
 
-            updateSyncStatus(okCount, 3);
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_EVENTI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        eventiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderEventi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_FOTO_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        const newPhotos = normalizePhotos(results.data);
+                        if (JSON.stringify(newPhotos) !== JSON.stringify(photosData)) {
+                            photosData = newPhotos;
+                            initPhotoSlider();
+                        } else if (!photoInterval && photosData.length > 1) {
+                            startAutoPhotoSlider();
+                        }
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
         }
 
         function checkScrollNeed(containerId, trackId) {
@@ -552,7 +555,7 @@
             today.setHours(0, 0, 0, 0);
 
             const avvisiValidi = avvisiData.filter(item => {
-                const dateToCheck = getField(item, 'Scadenza', 'Data');
+                const dateToCheck = item.Scadenza || item.Data;
                 if (!dateToCheck) return true;
                 const d = parseDate(dateToCheck);
                 return !d || d >= today;
@@ -565,27 +568,22 @@
             }
 
             track.dataset.singleHtml = avvisiValidi.map(item => {
-                const titolo = getField(item, 'Titolo', 'Avviso');
-                const testo = getField(item, 'Testo', 'Descrizione');
-                const data = getField(item, 'Data');
-                const badge = getField(item, 'Badge', 'Categoria');
-                const inEvidenza = getField(item, 'InEvidenza', 'In evidenza', 'Evidenza').toUpperCase() === 'SI';
-
-                const cardStyle = inEvidenza 
+                const isEvidenza = item.InEvidenza && item.InEvidenza.trim().toUpperCase() === 'SI';
+                const cardStyle = isEvidenza 
                     ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
                     : 'bg-white border-2 border-blue-100 shadow-md';
-                const badgeStyle = inEvidenza ? 'bg-amber-600 text-white animate-pulse' : 'bg-blue-900 text-white';
+                const badgeStyle = isEvidenza ? 'bg-amber-600 text-white animate-pulse' : 'bg-blue-900 text-white';
 
                 return `
                     <div class="${cardStyle} p-5 rounded-2xl transition-all">
                         <div class="flex items-center justify-between mb-2.5">
                             <span class="text-xs font-black px-3 py-1 ${badgeStyle} rounded-lg uppercase tracking-wider">
-                                ${inEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (badge || 'AVVISO')}
+                                ${isEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (item.Badge || 'AVVISO')}
                             </span>
-                            <span class="text-xs font-bold text-slate-500">${data}</span>
+                            <span class="text-xs font-bold text-slate-500">${item.Data || ''}</span>
                         </div>
-                        <h3 class="text-lg font-extrabold ${inEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1.5 leading-snug">${titolo}</h3>
-                        <p class="text-base font-medium text-slate-700 leading-relaxed">${testo}</p>
+                        <h3 class="text-lg font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1.5 leading-snug">${item.Titolo}</h3>
+                        <p class="text-base font-medium text-slate-700 leading-relaxed">${item.Testo || ''}</p>
                     </div>
                 `;
             }).join('');
@@ -603,7 +601,7 @@
             limitDate.setHours(23, 59, 59, 999);
 
             const eventiValidi = eventiData.filter(item => {
-                const dateToCheck = getField(item, 'Data', 'Scadenza');
+                const dateToCheck = item.Data || item.Scadenza;
                 if (!dateToCheck) return true;
                 
                 const d = parseDate(dateToCheck);
@@ -618,31 +616,23 @@
                 return;
             }
 
-            track.dataset.singleHtml = eventiValidi.map(item => {
-                const titolo = getField(item, 'Titolo', 'Evento');
-                const giorno = getField(item, 'Giorno', 'Data');
-                const ora = getField(item, 'Ora', 'Orario');
-                const nota = getField(item, 'Nota', 'Descrizione');
-                const luogo = getField(item, 'Luogo', 'Plesso', 'Sede');
-
-                return `
-                    <div class="bg-white p-5 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
-                        <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-2xl px-3.5 py-2.5 text-center text-white shrink-0 min-w-[6.2rem] shadow-sm">
-                            <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${giorno}</span>
-                            <span class="block text-base font-extrabold text-white font-mono mt-0.5">${ora}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-lg font-black text-indigo-950 leading-snug truncate">${titolo}</h3>
-                            </div>
-                            ${nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-xs font-bold px-2.5 py-0.5 rounded-md mb-1">${nota}</span>` : ''}
-                            <p class="text-sm font-bold text-slate-500 flex items-center truncate">
-                                <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${luogo || 'Sede dell\'istituto'}
-                            </p>
-                        </div>
+            track.dataset.singleHtml = eventiValidi.map(item => `
+                <div class="bg-white p-5 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
+                    <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-2xl px-3.5 py-2.5 text-center text-white shrink-0 min-w-[6.2rem] shadow-sm">
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data || ''}</span>
+                        <span class="block text-base font-extrabold text-white font-mono mt-0.5">${item.Ora || ''}</span>
                     </div>
-                `;
-            }).join('');
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-lg font-black text-indigo-950 leading-snug truncate">${item.Titolo}</h3>
+                        </div>
+                        ${item.Nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-xs font-bold px-2.5 py-0.5 rounded-md mb-1">${item.Nota}</span>` : ''}
+                        <p class="text-sm font-bold text-slate-500 flex items-center truncate">
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Sede dell\'istituto'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
 
             checkScrollNeed('eventiContainer', 'eventiTrack');
         }
