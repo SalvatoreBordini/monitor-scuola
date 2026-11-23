@@ -35,7 +35,7 @@
         }
 
         .scrolling-active {
-            animation: scrollVertical var(--scroll-duration, 45s) linear infinite;
+            animation: scrollDown var(--scroll-duration, 45s) linear infinite;
             will-change: transform;
         }
 
@@ -44,9 +44,9 @@
             animation-play-state: paused;
         }
 
-        @keyframes scrollVertical {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(0, -50%, 0); }
+        @keyframes scrollDown {
+            0% { transform: translateY(0%); }
+            100% { transform: translateY(-50%); }
         }
 
         /* Scorrimento orizzontale */
@@ -64,7 +64,7 @@
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(186, 214, 245, 0.95);
-            box-shadow: 0 18px 38px -6px rgba(147, 197, 153, 0.38);
+            box-shadow: 0 18px 38px -6px rgba(147, 197, 253, 0.38);
         }
 
         .touch-btn {
@@ -90,7 +90,7 @@
     </div>
 
     <!-- MODALE ORARIO SCOLASTICO -->
-    <div id="orarioModal" onclick="handleBackdropClick(event, 'orarioModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
+    <div id="orarioModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-6xl h-[86vh] rounded-3xl shadow-2xl border-2 border-blue-200 flex flex-col overflow-hidden">
             <div class="px-6 py-4 bg-gradient-to-r from-blue-950 to-indigo-950 text-white flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
@@ -122,8 +122,8 @@
     </div>
 
     <!-- MODALE PLESSI & SEDI -->
-    <div id="plessiModal" onclick="handleBackdropClick(event, 'plessiModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-6xl max-h-[90vh] rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
+    <div id="plessiModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
             <div class="px-6 py-4 bg-gradient-to-r from-indigo-950 to-blue-950 text-white flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
                     <span class="w-11 h-11 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-xl shadow">
@@ -139,55 +139,28 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-6 grid grid-cols-2 gap-5 bg-sky-50/50 overflow-y-auto">
-                <div class="bg-white p-5 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between gap-4">
+            <div class="p-6 grid grid-cols-2 gap-6 bg-sky-50/50">
+                <div class="bg-white p-6 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between gap-4">
                     <div>
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100 text-blue-900 mb-2">Sede Principale</span>
-                        <h3 class="text-xl font-black text-blue-950 mb-1.5">Plesso "M. Mila"</h3>
-                        <p class="text-base font-bold text-slate-700 mb-1"><i class="fa-solid fa-location-dot text-blue-700 mr-2"></i>Via Germonio, 12 - Torino</p>
+                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100 text-blue-900 mb-3">Sede Principale</span>
+                        <h3 class="text-2xl font-black text-blue-950 mb-2">Plesso "M. Mila"</h3>
+                        <p class="text-base font-bold text-slate-700 mb-2"><i class="fa-solid fa-location-dot text-blue-700 mr-2"></i>Via Germonio, 12 - 10145 Torino</p>
                         <p class="text-sm font-semibold text-slate-600"><i class="fa-solid fa-phone text-blue-700 mr-2"></i>011 01159190 • toic816001@istruzione.it</p>
                     </div>
                     <a href="https://maps.google.com/?saddr=Via+Germonio,+12,+Torino&daddr=Via+Germonio,+12,+Torino" target="_blank" rel="noopener noreferrer"
-                       class="touch-btn w-full py-3 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
+                       class="touch-btn w-full py-3.5 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
                         <i class="fa-solid fa-diamond-turn-right"></i> Indicazioni (da Via Germonio, 12)
                     </a>
                 </div>
-
-                <div class="bg-white p-5 rounded-2xl border-2 border-indigo-200 shadow-sm flex flex-col justify-between gap-4">
+                <div class="bg-white p-6 rounded-2xl border-2 border-indigo-200 shadow-sm flex flex-col justify-between gap-4">
                     <div>
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 mb-2">Scuola Primaria</span>
-                        <h3 class="text-xl font-black text-indigo-950 mb-1.5">Scuola Primaria "Rosa Agazzi"</h3>
-                        <p class="text-base font-bold text-slate-700 mb-1"><i class="fa-solid fa-location-dot text-indigo-700 mr-2"></i>Via Chambery, 33 - Torino</p>
+                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 mb-3">Plesso Scolastico</span>
+                        <h3 class="text-2xl font-black text-indigo-950 mb-2">Plesso "Agazzi"</h3>
+                        <p class="text-base font-bold text-slate-700 mb-2"><i class="fa-solid fa-location-dot text-indigo-700 mr-2"></i>Via Chambery, 33 - 10142 Torino</p>
                         <p class="text-sm font-semibold text-slate-600"><i class="fa-solid fa-route text-indigo-700 mr-2"></i>Partenza: Via Germonio, 12 - Torino</p>
                     </div>
                     <a href="https://maps.google.com/?saddr=Via+Germonio,+12,+Torino&daddr=Via+Chambery,+33,+Torino" target="_blank" rel="noopener noreferrer"
-                       class="touch-btn w-full py-3 px-4 rounded-xl bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
-                        <i class="fa-solid fa-diamond-turn-right"></i> Indicazioni (da Via Germonio, 12)
-                    </a>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl border-2 border-sky-200 shadow-sm flex flex-col justify-between gap-4">
-                    <div>
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-sky-100 text-sky-900 mb-2">Scuola dell'Infanzia</span>
-                        <h3 class="text-xl font-black text-sky-950 mb-1.5">Scuola dell'Infanzia "M. L. King"</h3>
-                        <p class="text-base font-bold text-slate-700 mb-1"><i class="fa-solid fa-location-dot text-sky-700 mr-2"></i>Via Thures, 11 - Torino</p>
-                        <p class="text-sm font-semibold text-slate-600"><i class="fa-solid fa-route text-sky-700 mr-2"></i>Partenza: Via Germonio, 12 - Torino</p>
-                    </div>
-                    <a href="https://maps.google.com/?saddr=Via+Germonio,+12,+Torino&daddr=Via+Thures,+11,+Torino" target="_blank" rel="noopener noreferrer"
-                       class="touch-btn w-full py-3 px-4 rounded-xl bg-sky-900 hover:bg-sky-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
-                        <i class="fa-solid fa-diamond-turn-right"></i> Indicazioni (da Via Germonio, 12)
-                    </a>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between gap-4">
-                    <div>
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100 text-blue-900 mb-2">Scuola dell'Infanzia</span>
-                        <h3 class="text-xl font-black text-blue-950 mb-1.5">Scuola dell'Infanzia "Carolina Agazzi"</h3>
-                        <p class="text-base font-bold text-slate-700 mb-1"><i class="fa-solid fa-location-dot text-blue-700 mr-2"></i>Via Postumia, 28 - Torino</p>
-                        <p class="text-sm font-semibold text-slate-600"><i class="fa-solid fa-route text-blue-700 mr-2"></i>Partenza: Via Germonio, 12 - Torino</p>
-                    </div>
-                    <a href="https://maps.google.com/?saddr=Via+Germonio,+12,+Torino&daddr=Via+Postumia,+28,+Torino" target="_blank" rel="noopener noreferrer"
-                       class="touch-btn w-full py-3 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
+                       class="touch-btn w-full py-3.5 px-4 rounded-xl bg-indigo-900 hover:bg-indigo-800 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow">
                         <i class="fa-solid fa-diamond-turn-right"></i> Indicazioni (da Via Germonio, 12)
                     </a>
                 </div>
@@ -277,4 +250,464 @@
                 </div>
             </div>
 
-            <!-- Contenitore Immagine con Tag
+            <!-- Contenitore Immagine con Tag <img> e object-contain per non tagliare nulla -->
+            <div class="relative flex-1 bg-slate-900/90 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center p-3">
+                <div id="photoSlider" class="w-full h-full relative flex items-center justify-center"></div>
+                <div class="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl border border-blue-200 shadow-lg z-20 flex items-center justify-between gap-3">
+                    <p id="photoCaption" class="text-sm font-extrabold text-blue-950 truncate">Caricamento foto...</p>
+                    <span id="photoCounter" class="text-xs font-black text-blue-900 bg-blue-100 px-2.5 py-1 rounded-lg shrink-0">0 / 0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLONNA 3: PROSSIMI EVENTI -->
+        <section class="col-span-4 glass-card rounded-3xl p-5 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3.5 mb-3 border-b-2 border-indigo-900 shrink-0">
+                <div class="flex items-center space-x-3">
+                    <span class="w-11 h-11 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </span>
+                    <h2 class="text-xl font-black text-indigo-950 tracking-wide">Prossimi Eventi</h2>
+                </div>
+                <span class="text-xs font-extrabold px-3.5 py-1.5 bg-indigo-100 text-indigo-900 rounded-full border border-indigo-200">15 Giorni</span>
+            </div>
+            <div id="eventiContainer" class="marquee-container flex-1">
+                <div id="eventiTrack" class="marquee-track"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER INFERIORE -->
+    <footer class="bg-white/95 backdrop-blur-md border-t border-sky-200 shrink-0 z-10 shadow-lg">
+        <div class="grid grid-cols-2 gap-5 px-7 py-2.5 border-b border-sky-200 bg-sky-50/60">
+            <div class="flex items-center space-x-3.5 bg-white p-3 rounded-2xl border-2 border-blue-200 shadow-sm">
+                <div class="w-11 h-11 rounded-xl bg-blue-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-black uppercase tracking-wider text-blue-950 block">Segreteria Famiglie / Alunni</span>
+                    <span id="orarioFamiglie" class="text-sm font-bold text-slate-700 truncate block">Su appuntamento: richiedi su toic816001@istruzione.it | Mar e Gio: 15:00 - 16:30</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3.5 bg-white p-3 rounded-2xl border-2 border-indigo-200 shadow-sm">
+                <div class="w-11 h-11 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-black uppercase tracking-wider text-indigo-950 block">Segreteria Personale / Docenti</span>
+                    <span id="orarioPersonale" class="text-sm font-bold text-slate-700 truncate block">Su appuntamento: richiedi su toic816001@istruzione.it | Accesso libero Mar e Gio 10:00 - 11:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-7 py-2.5 bg-blue-950 text-white flex items-center justify-between text-sm font-bold relative border-t border-blue-900">
+            <div class="flex items-center space-x-2 shrink-0 bg-blue-900 px-3.5 py-1.5 rounded-xl z-10 shadow mr-4 border border-blue-800">
+                <i class="fa-solid fa-bell animate-pulse text-amber-300"></i>
+                <span class="uppercase tracking-widest text-sky-200 text-xs">Info Utili</span>
+            </div>
+            <div class="ticker-wrap flex-1">
+                <div id="tickerText" class="ticker text-base font-semibold text-sky-100">
+                    Benvenuti all'Istituto Comprensivo "King Mila" • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico • Plessi: M. Mila (Via Germonio, 12) e Agazzi (Via Chambery, 33) •
+                </div>
+            </div>
+            <div id="syncBadge" class="ml-4 text-xs bg-blue-900 px-3 py-1.5 rounded-xl text-sky-200 shrink-0 font-bold border border-blue-800">
+                <i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync Cloud
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT JS -->
+    <script>
+        const SCHOOL_LOGO_URL = ''; 
+
+        const GOOGLE_SHEET_AVVISI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTglKka0W4NipKw8Gb89EXawHFM-xrP1nCx-kErAQdCXqAz3ZXEPDa35ZV5Nk_W3LhT-8D0JWmfLvwh/pub?output=csv';
+        const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
+        const GOOGLE_SHEET_FOTO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYu65u4Xgz3giwadwqa2nbakGR8fsgYeq71yDwLsj9-REFWAqGQnXDIvw8MeKTljy7QEcAO-0kExyf/pub?output=csv';
+
+        let avvisiData = [];
+        let eventiData = [];
+        let photosData = [];
+        let currentPhotoIndex = 0;
+        let photoInterval = null;
+        let resumeTimeout = null;
+        let idleModalTimeout = null;
+        let lastDateString = '';
+        let resizeTimeout = null;
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            resetIdleModalTimer();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            clearTimeout(idleModalTimeout);
+        }
+
+        function resetIdleModalTimer() {
+            clearTimeout(idleModalTimeout);
+            idleModalTimeout = setTimeout(() => {
+                closeModal('orarioModal');
+                closeModal('plessiModal');
+            }, 60000);
+        }
+
+        ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                const orarioOpen = !document.getElementById('orarioModal').classList.contains('hidden');
+                const plessiOpen = !document.getElementById('plessiModal').classList.contains('hidden');
+                if (orarioOpen || plessiOpen) {
+                    resetIdleModalTimer();
+                }
+            }, { passive: true });
+        });
+
+        function withCacheBuster(url) {
+            if (!url) return '';
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}t=${Date.now()}`;
+        }
+
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            dateStr = dateStr.trim();
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]);
+            } else if (dateStr.includes('-')) {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) return new Date(parts[0], parts[1] - 1, parts[2]);
+                    else return new Date(parts[2], parts[1] - 1, parts[0]);
+                }
+            }
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function convertDriveUrl(url) {
+            if (!url) return '';
+            url = url.trim();
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1600`;
+                }
+            }
+            return url;
+        }
+
+        function initSchoolLogo() {
+            const headerContainer = document.getElementById('headerLogoContainer');
+            const nightContainer = document.getElementById('nightLogoContainer');
+
+            if (SCHOOL_LOGO_URL && SCHOOL_LOGO_URL.trim() !== '') {
+                const logoSrc = convertDriveUrl(SCHOOL_LOGO_URL);
+                headerContainer.innerHTML = `<img src="${logoSrc}" alt="Logo Scuola" class="max-w-full max-h-full object-contain">`;
+                nightContainer.innerHTML = `<img src="${logoSrc}" alt="Logo Scuola" class="max-w-full max-h-full object-contain">`;
+            } else {
+                headerContainer.innerHTML = `<i class="fa-solid fa-graduation-cap text-4xl text-sky-300"></i>`;
+                nightContainer.innerHTML = `<i class="fa-solid fa-graduation-cap text-6xl text-white"></i>`;
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const timeInMinutes = hours * 60 + minutes;
+            const currentDateStr = now.toDateString();
+
+            if (lastDateString && lastDateString !== currentDateStr) {
+                renderAvvisi();
+                renderEventi();
+            }
+            lastDateString = currentDateStr;
+
+            const nightOverlay = document.getElementById('nightModeOverlay');
+            if (timeInMinutes >= 1140 || timeInMinutes < 450) {
+                nightOverlay.classList.remove('hidden');
+                document.getElementById('nightClock').textContent = now.toLocaleTimeString('it-IT');
+                document.getElementById('nightDate').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                return;
+            } else {
+                nightOverlay.classList.add('hidden');
+            }
+
+            document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+            document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function updateSyncStatus(isOk) {
+            const badgeEl = document.getElementById('syncBadge');
+            const timeLabel = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            if (isOk) {
+                badgeEl.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1 text-emerald-300"></i> Sync ${timeLabel}`;
+            } else {
+                badgeEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Offline ${timeLabel}`;
+            }
+        }
+
+        function fetchGoogleSheetsData() {
+            const badgeEl = document.getElementById('syncBadge');
+            badgeEl.innerHTML = '<i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync...';
+
+            let completedFeeds = 0;
+            let hasError = false;
+
+            function checkAllDone() {
+                completedFeeds++;
+                if (completedFeeds >= 3) {
+                    updateSyncStatus(!hasError);
+                }
+            }
+            
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_AVVISI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        avvisiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderAvvisi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_EVENTI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        eventiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderEventi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_FOTO_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        const newPhotos = results.data.filter(item => item.URLImmagine && item.URLImmagine.trim() !== '');
+                        if (JSON.stringify(newPhotos) !== JSON.stringify(photosData)) {
+                            photosData = newPhotos;
+                            initPhotoSlider();
+                        }
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+        }
+
+        function checkScrollNeed(containerId, trackId) {
+            const container = document.getElementById(containerId);
+            const track = document.getElementById(trackId);
+            
+            setTimeout(() => {
+                const singleHtml = track.dataset.singleHtml;
+                if (!singleHtml) return;
+                
+                track.innerHTML = singleHtml;
+                const contentHeight = track.scrollHeight;
+                const containerHeight = container.clientHeight;
+
+                if (contentHeight > containerHeight) {
+                    track.innerHTML = singleHtml + singleHtml;
+                    const calculatedSeconds = Math.min(110, Math.max(30, Math.round(contentHeight / 45)));
+                    track.style.setProperty('--scroll-duration', `${calculatedSeconds}s`);
+                    track.classList.add('scrolling-active');
+                } else {
+                    track.innerHTML = singleHtml;
+                    track.style.removeProperty('--scroll-duration');
+                    track.classList.remove('scrolling-active');
+                }
+            }, 50);
+        }
+
+        function renderAvvisi() {
+            const track = document.getElementById('avvisiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const avvisiValidi = avvisiData.filter(item => {
+                const dateToCheck = item.Scadenza || item.Data;
+                if (!dateToCheck) return true;
+                const d = parseDate(dateToCheck);
+                return !d || d >= today;
+            });
+
+            if (avvisiValidi.length === 0) {
+                track.dataset.singleHtml = `<div class="bg-white p-5 rounded-2xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun avviso attivo.</div>`;
+                checkScrollNeed('avvisiContainer', 'avvisiTrack');
+                return;
+            }
+
+            track.dataset.singleHtml = avvisiValidi.map(item => {
+                const isEvidenza = item.InEvidenza && item.InEvidenza.trim().toUpperCase() === 'SI';
+                const cardStyle = isEvidenza 
+                    ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
+                    : 'bg-white border-2 border-blue-100 shadow-md';
+                const badgeStyle = isEvidenza ? 'bg-amber-600 text-white animate-pulse' : 'bg-blue-900 text-white';
+
+                return `
+                    <div class="${cardStyle} p-5 rounded-2xl transition-all">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-black px-3 py-1 ${badgeStyle} rounded-lg uppercase tracking-wider">
+                                ${isEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (item.Badge || 'AVVISO')}
+                            </span>
+                            <span class="text-xs font-bold text-slate-500">${item.Data || ''}</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1.5 leading-snug">${item.Titolo}</h3>
+                        <p class="text-base font-medium text-slate-700 leading-relaxed">${item.Testo || ''}</p>
+                    </div>
+                `;
+            }).join('');
+
+            checkScrollNeed('avvisiContainer', 'avvisiTrack');
+        }
+
+        function renderEventi() {
+            const track = document.getElementById('eventiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const limitDate = new Date(today);
+            limitDate.setDate(today.getDate() + 15);
+            limitDate.setHours(23, 59, 59, 999);
+
+            const eventiValidi = eventiData.filter(item => {
+                const dateToCheck = item.Data || item.Scadenza;
+                if (!dateToCheck) return true;
+                
+                const d = parseDate(dateToCheck);
+                if (!d) return true;
+
+                return d >= today && d <= limitDate;
+            });
+
+            if (eventiValidi.length === 0) {
+                track.dataset.singleHtml = `<div class="bg-white p-5 rounded-2xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento nei prossimi 15 giorni.</div>`;
+                checkScrollNeed('eventiContainer', 'eventiTrack');
+                return;
+            }
+
+            track.dataset.singleHtml = eventiValidi.map(item => `
+                <div class="bg-white p-5 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
+                    <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-2xl px-3.5 py-2.5 text-center text-white shrink-0 min-w-[6.2rem] shadow-sm">
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data || ''}</span>
+                        <span class="block text-base font-extrabold text-white font-mono mt-0.5">${item.Ora || ''}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-lg font-black text-indigo-950 leading-snug truncate">${item.Titolo}</h3>
+                        </div>
+                        ${item.Nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-xs font-bold px-2.5 py-0.5 rounded-md mb-1">${item.Nota}</span>` : ''}
+                        <p class="text-sm font-bold text-slate-500 flex items-center truncate">
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Sede dell\'istituto'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+
+            checkScrollNeed('eventiContainer', 'eventiTrack');
+        }
+
+        function initPhotoSlider() {
+            const slider = document.getElementById('photoSlider');
+            if (photosData.length === 0) {
+                slider.innerHTML = `<div class="w-full h-full flex items-center justify-center text-sm font-bold text-slate-400">Nessuna foto disponibile</div>`;
+                document.getElementById('photoCaption').textContent = 'Nessuna foto disponibile';
+                document.getElementById('photoCounter').textContent = '0 / 0';
+                return;
+            }
+
+            currentPhotoIndex = 0;
+            slider.innerHTML = photosData.map((photo, index) => {
+                const imgUrl = convertDriveUrl(photo.URLImmagine);
+                const safeTitle = (photo.Titolo || 'Foto Scuola').replace(/"/g, '&quot;');
+                return `
+                    <div class="photo-slide absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                        <img src="${imgUrl}" alt="${safeTitle}" class="max-w-full max-h-full object-contain drop-shadow-md" onerror="this.parentElement.innerHTML='<div class=\\'text-sm font-bold text-slate-300 text-center px-4\\'><i class=\\'fa-solid fa-image-slash text-3xl mb-2 block text-sky-400\\'></i>Immagine non disponibile</div>'">
+                    </div>
+                `;
+            }).join('');
+            
+            updatePhotoCaption();
+            startAutoPhotoSlider();
+        }
+
+        function startAutoPhotoSlider() {
+            if (photoInterval) clearInterval(photoInterval);
+            if (photosData.length > 1) {
+                photoInterval = setInterval(() => showPhotoAt(currentPhotoIndex + 1), 6000);
+            }
+        }
+
+        function manualPhotoStep(delta) {
+            if (photosData.length <= 1) return;
+            showPhotoAt(currentPhotoIndex + delta);
+            if (photoInterval) clearInterval(photoInterval);
+            clearTimeout(resumeTimeout);
+            resumeTimeout = setTimeout(startAutoPhotoSlider, 15000);
+        }
+
+        function showPhotoAt(targetIndex) {
+            if (photosData.length === 0) return;
+            const slides = document.querySelectorAll('.photo-slide');
+            if (slides.length === 0) return;
+
+            slides[currentPhotoIndex].classList.remove('opacity-100');
+            slides[currentPhotoIndex].classList.add('opacity-0');
+
+            currentPhotoIndex = (targetIndex + photosData.length) % photosData.length;
+
+            slides[currentPhotoIndex].classList.remove('opacity-0');
+            slides[currentPhotoIndex].classList.add('opacity-100');
+
+            updatePhotoCaption();
+        }
+
+        function updatePhotoCaption() {
+            if (photosData[currentPhotoIndex]) {
+                document.getElementById('photoCaption').textContent = photosData[currentPhotoIndex].Titolo || '';
+                document.getElementById('photoCounter').textContent = `${currentPhotoIndex + 1} / ${photosData.length}`;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                checkScrollNeed('avvisiContainer', 'avvisiTrack');
+                checkScrollNeed('eventiContainer', 'eventiTrack');
+            }, 150);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSchoolLogo();
+            updateClock();
+            setInterval(updateClock, 1000);
+            fetchGoogleSheetsData();
+
+            setInterval(fetchGoogleSheetsData, 120000);
+        });
+    </script>
+</body>
+</html>
