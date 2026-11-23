@@ -709,4 +709,28 @@
             slides[currentPhotoIndex].classList.remove('opacity-100', 'z-10');
             slides[currentPhotoIndex].classList.add('opacity-0', 'z-0');
 
-            currentPhotoIndex = ((targetIndex % photosData.length) + photosData.
+            currentPhotoIndex = ((targetIndex % photosData.length) + photosData.length) % photosData.length;
+
+            slides[currentPhotoIndex].classList.remove('opacity-0', 'z-0');
+            slides[currentPhotoIndex].classList.add('opacity-100', 'z-10');
+        }
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                checkScrollNeed('avvisiContainer', 'avvisiTrack');
+                checkScrollNeed('eventiContainer', 'eventiTrack');
+            }, 150);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSchoolLogo();
+            updateClock();
+            setInterval(updateClock, 1000);
+            fetchGoogleSheetsData();
+
+            setInterval(fetchGoogleSheetsData, 120000);
+        });
+    </script>
+</body>
+</html>
