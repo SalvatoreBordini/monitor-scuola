@@ -29,7 +29,8 @@
         }
 
         .scrolling-active {
-            animation: scrollDown 45s linear infinite;
+            animation: scrollDown var(--scroll-duration, 45s) linear infinite;
+            will-change: transform;
         }
 
         .marquee-container:hover .scrolling-active { animation-play-state: paused; }
@@ -41,7 +42,7 @@
 
         /* Scorrimento orizzontale */
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
-        .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        .ticker { display: inline-block; animation: ticker 40s linear infinite; will-change: transform; }
         .ticker-wrap:hover .ticker { animation-play-state: paused; }
 
         @keyframes ticker {
@@ -185,7 +186,7 @@
             </div>
             <div class="ticker-wrap flex-1">
                 <div id="tickerText" class="ticker text-sm font-semibold text-sky-100">
-                    Benvenuti all'Istituto Comprensivo • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico •
+                    Benvenuti all'Istituto Comprensivo "King Mila" • Si ricorda di giustificare tempestivamente le assenze tramite Registro Elettronico • Plessi: M. Mila (Via Germonio, 12) e Agazzi (Via Chambery, 33) •
                 </div>
             </div>
             <div id="syncBadge" class="ml-3 text-[11px] bg-blue-900 px-2.5 py-1 rounded-lg text-sky-200 shrink-0 font-bold border border-blue-800">
@@ -208,6 +209,7 @@
         let currentPhotoIndex = 0;
         let photoInterval = null;
         let lastDateString = '';
+        let resizeTimeout = null;
 
         function withCacheBuster(url) {
             if (!url) return '';
@@ -274,4 +276,275 @@
             const nightOverlay = document.getElementById('nightModeOverlay');
             if (timeInMinutes >= 1140 || timeInMinutes < 450) {
                 nightOverlay.classList.remove('hidden');
-                document.getElementById('nightClock').textContent = now
+                document.getElementById('nightClock').textContent = now.toLocaleTimeString('it-IT');
+                document.getElementById('nightDate').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                return;
+            } else {
+                nightOverlay.classList.add('hidden');
+            }
+
+            document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+            document.getElementById('date').textContent = now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function updateSyncStatus(isOk) {
+            const badgeEl = document.getElementById('syncBadge');
+            const timeLabel = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            if (isOk) {
+                badgeEl.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1 text-emerald-300"></i> Sync ${timeLabel}`;
+            } else {
+                badgeEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-300"></i> Offline ${timeLabel}`;
+            }
+        }
+
+        function fetchGoogleSheetsData() {
+            const badgeEl = document.getElementById('syncBadge');
+            badgeEl.innerHTML = '<i class="fa-solid fa-rotate animate-spin mr-1"></i> Sync...';
+
+            let completedFeeds = 0;
+            let hasError = false;
+
+            function checkAllDone() {
+                completedFeeds++;
+                if (completedFeeds >= 3) {
+                    updateSyncStatus(!hasError);
+                }
+            }
+            
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_AVVISI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        avvisiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderAvvisi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_EVENTI_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        eventiData = results.data.filter(item => item.Titolo && item.Titolo.trim() !== '');
+                        renderEventi();
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+
+            Papa.parse(withCacheBuster(GOOGLE_SHEET_FOTO_URL), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data) {
+                        const newPhotos = results.data.filter(item => item.URLImmagine && item.URLImmagine.trim() !== '');
+                        if (JSON.stringify(newPhotos) !== JSON.stringify(photosData)) {
+                            photosData = newPhotos;
+                            initPhotoSlider();
+                        }
+                    }
+                    checkAllDone();
+                },
+                error: function() {
+                    hasError = true;
+                    checkAllDone();
+                }
+            });
+        }
+
+        function checkScrollNeed(containerId, trackId) {
+            const container = document.getElementById(containerId);
+            const track = document.getElementById(trackId);
+            
+            setTimeout(() => {
+                const singleHtml = track.dataset.singleHtml;
+                if (!singleHtml) return;
+                
+                track.innerHTML = singleHtml;
+                const contentHeight = track.scrollHeight;
+                const containerHeight = container.clientHeight;
+
+                if (contentHeight > containerHeight) {
+                    track.innerHTML = singleHtml + singleHtml;
+                    // Calcola una velocità fluida (~45 px/s) con limiti compresi tra 30s e 110s
+                    const calculatedSeconds = Math.min(110, Math.max(30, Math.round(contentHeight / 45)));
+                    track.style.setProperty('--scroll-duration', `${calculatedSeconds}s`);
+                    track.classList.add('scrolling-active');
+                } else {
+                    track.innerHTML = singleHtml;
+                    track.style.removeProperty('--scroll-duration');
+                    track.classList.remove('scrolling-active');
+                }
+            }, 50);
+        }
+
+        function renderAvvisi() {
+            const track = document.getElementById('avvisiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const avvisiValidi = avvisiData.filter(item => {
+                const dateToCheck = item.Scadenza || item.Data;
+                if (!dateToCheck) return true;
+                const d = parseDate(dateToCheck);
+                return !d || d >= today;
+            });
+
+            if (avvisiValidi.length === 0) {
+                track.dataset.singleHtml = `<div class="bg-white p-4 rounded-xl border-2 border-blue-100 text-center text-slate-500 font-bold">Nessun avviso attivo.</div>`;
+                checkScrollNeed('avvisiContainer', 'avvisiTrack');
+                return;
+            }
+
+            track.dataset.singleHtml = avvisiValidi.map(item => {
+                const isEvidenza = item.InEvidenza && item.InEvidenza.trim().toUpperCase() === 'SI';
+                const cardStyle = isEvidenza 
+                    ? 'bg-amber-50/95 border-2 border-amber-400 shadow-lg ring-2 ring-amber-200' 
+                    : 'bg-white border-2 border-blue-100 shadow-md';
+                const badgeStyle = isEvidenza ? 'bg-amber-600 text-white animate-pulse' : 'bg-blue-900 text-white';
+
+                return `
+                    <div class="${cardStyle} p-4 rounded-xl transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-black px-2.5 py-1 ${badgeStyle} rounded-md uppercase tracking-wider">
+                                ${isEvidenza ? '<i class="fa-solid fa-star mr-1"></i> IN EVIDENZA' : (item.Badge || 'AVVISO')}
+                            </span>
+                            <span class="text-xs font-bold text-slate-400">${item.Data || ''}</span>
+                        </div>
+                        <h3 class="text-base font-extrabold ${isEvidenza ? 'text-amber-950' : 'text-blue-950'} mb-1 leading-snug">${item.Titolo}</h3>
+                        <p class="text-sm font-medium text-slate-700 leading-relaxed">${item.Testo || ''}</p>
+                    </div>
+                `;
+            }).join('');
+
+            checkScrollNeed('avvisiContainer', 'avvisiTrack');
+        }
+
+        function renderEventi() {
+            const track = document.getElementById('eventiTrack');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const limitDate = new Date(today);
+            limitDate.setDate(today.getDate() + 15);
+            limitDate.setHours(23, 59, 59, 999);
+
+            const eventiValidi = eventiData.filter(item => {
+                const dateToCheck = item.Data || item.Scadenza;
+                if (!dateToCheck) return true;
+                
+                const d = parseDate(dateToCheck);
+                if (!d) return true;
+
+                return d >= today && d <= limitDate;
+            });
+
+            if (eventiValidi.length === 0) {
+                track.dataset.singleHtml = `<div class="bg-white p-4 rounded-xl border-2 border-indigo-100 text-center text-slate-500 font-bold">Nessun evento nei prossimi 15 giorni.</div>`;
+                checkScrollNeed('eventiContainer', 'eventiTrack');
+                return;
+            }
+
+            track.dataset.singleHtml = eventiValidi.map(item => `
+                <div class="bg-white p-4 rounded-2xl border-2 border-indigo-100 shadow-md flex items-center space-x-4">
+                    <div class="bg-gradient-to-b from-indigo-900 to-blue-950 border border-indigo-800 rounded-xl px-3 py-2 text-center text-white shrink-0 min-w-[5.5rem] shadow-sm">
+                        <span class="block text-xs font-black tracking-wider uppercase text-indigo-200">${item.Giorno || item.Data || ''}</span>
+                        <span class="block text-sm font-extrabold text-white font-mono mt-0.5">${item.Ora || ''}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-black text-indigo-950 leading-snug truncate">${item.Titolo}</h3>
+                        </div>
+                        ${item.Nota ? `<span class="inline-block bg-indigo-50 text-indigo-900 border border-indigo-200 text-[11px] font-bold px-2 py-0.5 rounded-md mb-1">${item.Nota}</span>` : ''}
+                        <p class="text-xs font-bold text-slate-500 flex items-center truncate">
+                            <i class="fa-solid fa-location-dot text-indigo-600 mr-1.5 text-xs"></i> ${item.Luogo || 'Sede dell\'istituto'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+
+            checkScrollNeed('eventiContainer', 'eventiTrack');
+        }
+
+        function initPhotoSlider() {
+            const slider = document.getElementById('photoSlider');
+            if (photosData.length === 0) {
+                slider.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">Nessuna foto disponibile</div>`;
+                document.getElementById('photoCaption').textContent = 'Nessuna foto disponibile';
+                return;
+            }
+
+            currentPhotoIndex = 0;
+            slider.innerHTML = photosData.map((photo, index) => {
+                const imgUrl = convertDriveUrl(photo.URLImmagine);
+                const safeTitle = (photo.Titolo || 'Foto Scuola').replace(/"/g, '&quot;');
+                return `
+                    <div class="photo-slide absolute inset-0 flex items-center justify-center transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                        <img src="${imgUrl}" alt="${safeTitle}" class="max-w-full max-h-full object-contain drop-shadow-md" onerror="this.parentElement.innerHTML='<div class=\\'text-xs font-bold text-slate-300 text-center px-4\\'><i class=\\'fa-solid fa-image-slash text-2xl mb-2 block text-sky-400\\'></i>Immagine non disponibile</div>'">
+                    </div>
+                `;
+            }).join('');
+            
+            updatePhotoCaption();
+
+            if (photoInterval) clearInterval(photoInterval);
+            if (photosData.length > 1) {
+                photoInterval = setInterval(nextPhoto, 6000);
+            }
+        }
+
+        function nextPhoto() {
+            if (photosData.length <= 1) return;
+            const slides = document.querySelectorAll('.photo-slide');
+            if (slides.length === 0) return;
+            
+            slides[currentPhotoIndex].classList.remove('opacity-100');
+            slides[currentPhotoIndex].classList.add('opacity-0');
+
+            currentPhotoIndex = (currentPhotoIndex + 1) % photosData.length;
+
+            slides[currentPhotoIndex].classList.remove('opacity-0');
+            slides[currentPhotoIndex].classList.add('opacity-100');
+
+            updatePhotoCaption();
+        }
+
+        function updatePhotoCaption() {
+            if (photosData[currentPhotoIndex]) {
+                document.getElementById('photoCaption').textContent = photosData[currentPhotoIndex].Titolo || '';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                checkScrollNeed('avvisiContainer', 'avvisiTrack');
+                checkScrollNeed('eventiContainer', 'eventiTrack');
+            }, 150);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSchoolLogo();
+            updateClock();
+            setInterval(updateClock, 1000);
+            fetchGoogleSheetsData();
+
+            setInterval(fetchGoogleSheetsData, 120000);
+        });
+    </script>
+</body>
+</html>
