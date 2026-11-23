@@ -103,82 +103,6 @@
         </div>
     </div>
 
-    <!-- MODALE ORARI SEGRETERIA FAMIGLIE / ALUNNI -->
-    <div id="segreteriaFamiglieModal" onclick="handleBackdropClick(event, 'segreteriaFamiglieModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border-2 border-blue-200 flex flex-col overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-3.5">
-                    <span class="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-xl shadow-lg">
-                        <i class="fa-solid fa-users"></i>
-                    </span>
-                    <div>
-                        <h2 class="text-2xl font-black tracking-tight">Segreteria Famiglie / Alunni</h2>
-                        <p class="text-xs font-bold text-sky-200">Istituto Comprensivo "King Mila" • Via Germonio, 12 - Torino</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeModal('segreteriaFamiglieModal')"
-                        class="touch-btn w-12 h-12 rounded-2xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="p-7 bg-sky-50/60 space-y-5">
-                <div class="bg-white p-6 rounded-2xl border-2 border-blue-200 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-blue-100 text-blue-900">
-                            Ricevimento Ordinario
-                        </span>
-                        <span class="text-sm font-black text-blue-950">
-                            <i class="fa-solid fa-phone text-sky-600 mr-1.5"></i>011 01159190
-                        </span>
-                    </div>
-                    <h3 class="text-xl font-black text-blue-950">Martedì e Giovedì: 15:00 - 16:30</h3>
-                    <p class="text-base font-semibold text-slate-700 leading-relaxed">
-                        Ricevimento su appuntamento previo invio richiesta all'indirizzo email istituzionale
-                        <strong class="text-blue-950">toic816001@istruzione.it</strong>.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALE ORARI SEGRETERIA PERSONALE / DOCENTI -->
-    <div id="segreteriaPersonaleModal" onclick="handleBackdropClick(event, 'segreteriaPersonaleModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-indigo-950 via-blue-950 to-sky-950 text-white flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-3.5">
-                    <span class="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-xl shadow-lg">
-                        <i class="fa-solid fa-id-card"></i>
-                    </span>
-                    <div>
-                        <h2 class="text-2xl font-black tracking-tight">Segreteria Personale / Docenti</h2>
-                        <p class="text-xs font-bold text-indigo-200">Istituto Comprensivo "King Mila" • Via Germonio, 12 - Torino</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeModal('segreteriaPersonaleModal')"
-                        class="touch-btn w-12 h-12 rounded-2xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="p-7 bg-indigo-50/50 space-y-5">
-                <div class="bg-white p-6 rounded-2xl border-2 border-indigo-200 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <span class="inline-block text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-indigo-100 text-indigo-900">
-                            Accesso Libero & Appuntamenti
-                        </span>
-                        <span class="text-sm font-black text-indigo-950">
-                            <i class="fa-solid fa-envelope text-indigo-600 mr-1.5"></i>toic816001@istruzione.it
-                        </span>
-                    </div>
-                    <h3 class="text-xl font-black text-indigo-950">Accesso libero: Martedì e Giovedì 10:00 - 11:00</h3>
-                    <p class="text-base font-semibold text-slate-700 leading-relaxed">
-                        In altri orari su appuntamento tramite richiesta a
-                        <strong class="text-indigo-950">toic816001@istruzione.it</strong>.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODALE PLESSI & SEDI -->
     <div id="plessiModal" onclick="handleBackdropClick(event, 'plessiModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-6xl max-h-[90vh] rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
@@ -254,50 +178,41 @@
     </div>
 
     <!-- HEADER SUPERIORE -->
-    <header class="h-28 px-6 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-xl z-10 shrink-0 border-b-2 border-sky-400/30 gap-4">
-        <div class="flex items-center space-x-4 min-w-0">
-            <div id="headerLogoContainer" class="w-18 h-18 w-20 h-20 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0 p-2 backdrop-blur-sm"></div>
+    <header class="h-28 px-7 bg-gradient-to-r from-blue-950 via-sky-950 to-indigo-950 text-white flex items-center justify-between shadow-xl z-10 shrink-0 border-b-2 border-sky-400/30">
+        <div class="flex items-center space-x-5 min-w-0">
+            <div id="headerLogoContainer" class="w-20 h-20 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-md shadow-sky-500/20 overflow-hidden shrink-0 p-2 backdrop-blur-sm"></div>
             <div class="min-w-0">
-                <div class="flex items-center gap-2.5 mb-1.5">
-                    <h1 id="schoolName" class="text-2xl xl:text-3xl font-black text-white tracking-tight leading-none truncate">
+                <div class="flex items-center gap-3 mb-2">
+                    <h1 id="schoolName" class="text-3xl font-black text-white tracking-tight leading-none truncate">
                         Istituto Comprensivo "King Mila"
                     </h1>
+                    <span class="hidden xl:inline-block text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-sky-500/20 text-sky-200 border border-sky-400/30 shrink-0">
+                        Circoscrizione 3 • Torino
+                    </span>
                 </div>
-                <p id="schoolContacts" class="text-xs xl:text-sm font-bold text-sky-300 flex items-center gap-4 truncate">
-                    <span><i class="fa-solid fa-location-dot text-sky-400 mr-1"></i>Via Germonio, 12 - Torino</span>
-                    <span><i class="fa-solid fa-phone text-sky-400 mr-1"></i>011 01159190</span>
-                    <span><i class="fa-solid fa-envelope text-sky-400 mr-1"></i>toic816001@istruzione.it</span>
+                <p id="schoolContacts" class="text-sm font-bold text-sky-300 flex items-center gap-5 truncate">
+                    <span><i class="fa-solid fa-location-dot text-sky-400 mr-1.5"></i>Via Germonio, 12 - Torino</span>
+                    <span><i class="fa-solid fa-phone text-sky-400 mr-1.5"></i>011 01159190</span>
+                    <span><i class="fa-solid fa-envelope text-sky-400 mr-1.5"></i>toic816001@istruzione.it</span>
                 </p>
             </div>
         </div>
 
-        <div class="flex items-center gap-2.5 shrink-0">
-            <!-- 2 TASTI PICCOLI SEGRETERIA -->
-            <button type="button" onclick="openModal('segreteriaFamiglieModal')"
-                    class="touch-btn h-12 px-3.5 rounded-xl bg-blue-900/90 hover:bg-blue-800 border border-sky-400/35 text-sky-100 font-extrabold text-xs flex items-center gap-2 shadow">
-                <i class="fa-solid fa-users text-sky-300 text-sm"></i>
-                <span>Segr. Famiglie</span>
-            </button>
-            <button type="button" onclick="openModal('segreteriaPersonaleModal')"
-                    class="touch-btn h-12 px-3.5 rounded-xl bg-indigo-900/90 hover:bg-indigo-800 border border-indigo-400/35 text-indigo-100 font-extrabold text-xs flex items-center gap-2 shadow">
-                <i class="fa-solid fa-id-card text-indigo-300 text-sm"></i>
-                <span>Segr. Personale</span>
-            </button>
-
-            <!-- TASTO PLESSI -->
+        <div class="flex items-center gap-4 shrink-0">
+            <!-- PULSANTE INTERATTIVO TOUCH -->
             <button type="button" onclick="openModal('plessiModal')"
-                    class="touch-btn h-14 px-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 border border-indigo-300/40 text-white font-extrabold text-sm flex items-center gap-2.5 shadow-lg shadow-indigo-950/40">
-                <i class="fa-solid fa-map-location-dot text-lg text-sky-200"></i>
+                    class="touch-btn h-16 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 border border-indigo-300/40 text-white font-extrabold text-base flex items-center gap-3 shadow-lg shadow-indigo-950/40">
+                <i class="fa-solid fa-map-location-dot text-xl text-sky-200"></i>
                 <span>Plessi</span>
             </button>
 
             <!-- OROLOGIO -->
-            <div class="flex items-center gap-3.5 bg-blue-900/75 border border-blue-700/60 rounded-2xl px-4 py-2 shadow-inner h-14">
+            <div class="flex items-center gap-4 bg-blue-900/75 border border-blue-700/60 rounded-2xl px-5 py-2.5 shadow-inner h-16">
                 <div class="text-right">
-                    <div id="clock" class="text-2xl xl:text-3xl font-black text-white font-mono tracking-tight leading-none mb-0.5">00:00:00</div>
-                    <div id="date" class="text-[11px] font-bold text-sky-200 capitalize">Caricamento data...</div>
+                    <div id="clock" class="text-3xl font-black text-white font-mono tracking-tight leading-none mb-1">00:00:00</div>
+                    <div id="date" class="text-xs font-bold text-sky-200 capitalize">Caricamento data...</div>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow-sm">
+                <div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center text-xl shadow-sm">
                     <i class="fa-solid fa-clock"></i>
                 </div>
             </div>
@@ -373,7 +288,28 @@
 
     <!-- FOOTER INFERIORE -->
     <footer class="bg-white/95 backdrop-blur-md border-t border-sky-200 shrink-0 z-10 shadow-lg">
-        <div class="px-7 py-2.5 bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white flex items-center justify-between text-sm font-bold relative">
+        <div class="grid grid-cols-2 gap-5 px-7 py-2.5 border-b border-sky-200 bg-sky-50/70">
+            <div class="flex items-center space-x-3.5 bg-white p-3 rounded-2xl border-2 border-blue-200 shadow-sm">
+                <div class="w-11 h-11 rounded-xl bg-blue-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-black uppercase tracking-wider text-blue-950 block">Segreteria Famiglie / Alunni</span>
+                    <span id="orarioFamiglie" class="text-sm font-bold text-slate-700 truncate block">Su appuntamento: richiedi su toic816001@istruzione.it | Mar e Gio: 15:00 - 16:30</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3.5 bg-white p-3 rounded-2xl border-2 border-indigo-200 shadow-sm">
+                <div class="w-11 h-11 rounded-xl bg-indigo-900 text-white flex items-center justify-center text-lg shrink-0 shadow">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div class="truncate">
+                    <span class="text-xs font-black uppercase tracking-wider text-indigo-950 block">Segreteria Personale / Docenti</span>
+                    <span id="orarioPersonale" class="text-sm font-bold text-slate-700 truncate block">Su appuntamento: richiedi su toic816001@istruzione.it | Accesso libero Mar e Gio 10:00 - 11:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-7 py-2.5 bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white flex items-center justify-between text-sm font-bold relative border-t border-blue-900">
             <div class="flex items-center space-x-2 shrink-0 bg-blue-950/90 px-3.5 py-1.5 rounded-xl z-10 shadow mr-4 border border-sky-400/25">
                 <i class="fa-solid fa-bell animate-pulse text-amber-300"></i>
                 <span class="uppercase tracking-widest text-sky-200 text-xs">Info Utili</span>
@@ -397,8 +333,6 @@
         const GOOGLE_SHEET_EVENTI_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLYqN0UGNgpsftBy2D6zBGK4ywUsyrD7PIYAPKXB32CW5B_zM0Y7ygIJvH5tLMVTJQ0oD3X8MAQmsh/pub?output=csv';
         const GOOGLE_SHEET_FOTO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYu65u4Xgz3giwadwqa2nbakGR8fsgYeq71yDwLsj9-REFWAqGQnXDIvw8MeKTljy7QEcAO-0kExyf/pub?output=csv';
 
-        const MODAL_IDS = ['plessiModal', 'segreteriaFamiglieModal', 'segreteriaPersonaleModal'];
-
         let avvisiData = [];
         let eventiData = [];
         let photosData = [];
@@ -409,26 +343,13 @@
         let lastDateString = '';
         let resizeTimeout = null;
 
-        function closeAllModals() {
-            MODAL_IDS.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            clearTimeout(idleModalTimeout);
-        }
-
         function openModal(modalId) {
-            closeAllModals();
-            const target = document.getElementById(modalId);
-            if (target) {
-                target.classList.remove('hidden');
-                resetIdleModalTimer();
-            }
+            document.getElementById(modalId).classList.remove('hidden');
+            resetIdleModalTimer();
         }
 
         function closeModal(modalId) {
-            const target = document.getElementById(modalId);
-            if (target) target.classList.add('hidden');
+            document.getElementById(modalId).classList.add('hidden');
             clearTimeout(idleModalTimeout);
         }
 
@@ -441,23 +362,20 @@
         function resetIdleModalTimer() {
             clearTimeout(idleModalTimeout);
             idleModalTimeout = setTimeout(() => {
-                closeAllModals();
+                closeModal('plessiModal');
             }, 60000);
         }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeAllModals();
+                closeModal('plessiModal');
             }
         });
 
         ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
             document.addEventListener(evt, () => {
-                const anyModalOpen = MODAL_IDS.some(id => {
-                    const el = document.getElementById(id);
-                    return el && !el.classList.contains('hidden');
-                });
-                if (anyModalOpen) {
+                const plessiOpen = !document.getElementById('plessiModal').classList.contains('hidden');
+                if (plessiOpen) {
                     resetIdleModalTimer();
                 }
             }, { passive: true });
