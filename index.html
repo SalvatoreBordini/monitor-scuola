@@ -35,7 +35,7 @@
         }
 
         .scrolling-active {
-            animation: scrollDown var(--scroll-duration, 45s) linear infinite;
+            animation: scrollVertical var(--scroll-duration, 45s) linear infinite;
             will-change: transform;
         }
 
@@ -44,9 +44,9 @@
             animation-play-state: paused;
         }
 
-        @keyframes scrollDown {
-            0% { transform: translateY(0%); }
-            100% { transform: translateY(-50%); }
+        @keyframes scrollVertical {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(0, -50%, 0); }
         }
 
         /* Scorrimento orizzontale */
@@ -64,7 +64,7 @@
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(186, 214, 245, 0.95);
-            box-shadow: 0 18px 38px -6px rgba(147, 197, 253, 0.38);
+            box-shadow: 0 18px 38px -6px rgba(147, 197, 153, 0.38);
         }
 
         .touch-btn {
@@ -90,7 +90,7 @@
     </div>
 
     <!-- MODALE ORARIO SCOLASTICO -->
-    <div id="orarioModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
+    <div id="orarioModal" onclick="handleBackdropClick(event, 'orarioModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-6xl h-[86vh] rounded-3xl shadow-2xl border-2 border-blue-200 flex flex-col overflow-hidden">
             <div class="px-6 py-4 bg-gradient-to-r from-blue-950 to-indigo-950 text-white flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
@@ -122,8 +122,8 @@
     </div>
 
     <!-- MODALE PLESSI & SEDI -->
-    <div id="plessiModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
+    <div id="plessiModal" onclick="handleBackdropClick(event, 'plessiModal')" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-6xl max-h-[90vh] rounded-3xl shadow-2xl border-2 border-indigo-200 flex flex-col overflow-hidden">
             <div class="px-6 py-4 bg-gradient-to-r from-indigo-950 to-blue-950 text-white flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
                     <span class="w-11 h-11 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-xl shadow">
@@ -139,7 +139,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-6 grid grid-cols-2 gap-5 bg-sky-50/50">
+            <div class="p-6 grid grid-cols-2 gap-5 bg-sky-50/50 overflow-y-auto">
                 <div class="bg-white p-5 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between gap-4">
                     <div>
                         <span class="inline-block text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-blue-100 text-blue-900 mb-2">Sede Principale</span>
@@ -267,4 +267,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="manualPhotoStep(-1)" aria-label="Foto precedente"
-                            class="touch-
+                            class="touch-btn w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-950 flex items-center justify-center border border-blue-200">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" onclick="manualPhotoStep(1)" aria-label="Foto successiva"
+                            class="touch-btn w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-950 flex items-center justify-center border border-blue-200">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenitore Immagine con Tag
